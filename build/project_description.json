@@ -1,7 +1,7 @@
 {
     "version":            "1.1",
     "project_name":       "tes1",
-    "project_version":    "5b24ee1-dirty",
+    "project_version":    "7fd30fc-dirty",
     "project_path":       "/home/pepe/Sistema_Asistencia_Biometrico",
     "idf_path":           "/home/pepe/esp/esp-idf",
     "build_dir":          "/home/pepe/Sistema_Asistencia_Biometrico/build",
