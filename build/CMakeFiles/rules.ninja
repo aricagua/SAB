@@ -1773,6 +1773,25 @@ rule C_STATIC_LIBRARY_LINKER____idf_wifi_provisioning_
 #############################################
 # Rule for compiling C files.
 
+rule C_COMPILER____idf_sd_card_
+  depfile = $DEP_FILE
+  deps = gcc
+  command = /home/pepe/.espressif/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc $DEFINES $INCLUDES $FLAGS -MD -MT $out -MF $DEP_FILE -o $out -c $in
+  description = Building C object $out
+
+
+#############################################
+# Rule for linking C static library.
+
+rule C_STATIC_LIBRARY_LINKER____idf_sd_card_
+  command = $PRE_LINK && /usr/bin/cmake -E rm -f $TARGET_FILE && /home/pepe/.espressif/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/bin/xtensa-esp32s3-elf-ar qc $TARGET_FILE $LINK_FLAGS $in && /home/pepe/.espressif/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/bin/xtensa-esp32s3-elf-ranlib $TARGET_FILE && $POST_BUILD
+  description = Linking C static library $TARGET_FILE
+  restat = $RESTAT
+
+
+#############################################
+# Rule for compiling C files.
+
 rule C_COMPILER____idf_main_
   depfile = $DEP_FILE
   deps = gcc
@@ -1793,7 +1812,7 @@ rule C_STATIC_LIBRARY_LINKER____idf_main_
 # Rule for re-running cmake.
 
 rule RERUN_CMAKE
-  command = /usr/bin/cmake --regenerate-during-build -S/home/pepe/tes1 -B/home/pepe/tes1/build
+  command = /usr/bin/cmake --regenerate-during-build -S/home/pepe/Sistema_Asistencia_Biometrico -B/home/pepe/Sistema_Asistencia_Biometrico/build
   description = Re-running CMake...
   generator = 1
 
