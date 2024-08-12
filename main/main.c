@@ -62,7 +62,7 @@ void app_main() {
 }
 
 void teclado_task(void *pvParameters) {
-    gpio_num_t keypad[8] = {6, 7, 15, 16, 17, 14, 13, 12};
+    gpio_num_t keypad[8] = {6, 7, 15, 16, 3, 14, 13, 12};
     
     esp_err_t init_result = keypad_initalize(keypad);
     if (init_result != ESP_OK) {
@@ -76,7 +76,7 @@ void teclado_task(void *pvParameters) {
         vTaskDelete(NULL);
     }
 
-    while(true) {
+   while(true) {
         char keypressed = keypad_getkey();
         if(keypressed != '\0') {
             ESP_LOGI("KEYPAD", "Tecla presionada: %c", keypressed);
@@ -202,10 +202,11 @@ void pantalla_task(void *pvParameters) {
     TFTsetTextWrap(true);
 
     EstadoMenu estado_anterior = ESTADO_BIENVENIDA;
+    int opcion_seleccionada_anterior = 0;
     TickType_t last_update = xTaskGetTickCount();
 
     while (true) {
-        if (estado_actual != estado_anterior) {
+        if (estado_actual != estado_anterior || opcion_seleccionada != opcion_seleccionada_anterior) {
             TFTfillScreen(ST7735_BLACK);
 
             switch (estado_actual) {
@@ -240,6 +241,7 @@ void pantalla_task(void *pvParameters) {
             }
 
             estado_anterior = estado_actual;
+            opcion_seleccionada_anterior = opcion_seleccionada;
         }
 
         if (estado_actual == ESTADO_BIENVENIDA && xTaskGetTickCount() - last_update > pdMS_TO_TICKS(3000)) {
@@ -250,17 +252,19 @@ void pantalla_task(void *pvParameters) {
     }
 }
 
+
 void dibujar_menu_principal() {
     TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(0, 0, "BIENVENIDO", ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(get_centered_position("BIENVENIDO"), 0, "BIENVENIDO", ST7735_WHITE, ST7735_BLACK, 1);
     char fecha_hora[30];
     snprintf(fecha_hora, sizeof(fecha_hora), "Agosto 10 de 2024 20:00");
     TFTdrawText(get_centered_position(fecha_hora), SCREEN_HEIGHT/2, fecha_hora, ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "C: Configuracion", ST7735_WHITE, ST7735_BLACK, 1);
 }
 
 void dibujar_menu_configuracion() {
     TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(0, 0, "CONFIGURACION", ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(get_centered_position("CONFIGURACION"), 0, "CONFIGURACION", ST7735_WHITE, ST7735_BLACK, 1);
     const char* opciones[] = {"1. REGISTRAR USUARIO", "2. BUSCAR USUARIO", "3. CONF. AVANZADA"};
     for(int i = 0; i < 3; i++) {
         uint16_t bgColor = (i == opcion_seleccionada - 1) ? ST7735_BLUE : ST7735_BLACK;
@@ -272,7 +276,7 @@ void dibujar_menu_configuracion() {
 
 void dibujar_menu_registrar_usuario() {
     TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(0, 0, "REGISTRAR USUARIO", ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(get_centered_position("REGISTRAR USUARIO"), 0, "REGISTRAR USUARIO", ST7735_WHITE, ST7735_BLACK, 1);
     const char* opciones[] = {"1. CEDULA", "2. HUELLA", "3. PIN", "4. TIPO"};
     for(int i = 0; i < 4; i++) {
         uint16_t bgColor = (i == opcion_seleccionada - 1) ? ST7735_BLUE : ST7735_BLACK;
