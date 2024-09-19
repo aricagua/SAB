@@ -62,7 +62,7 @@ void app_main() {
 }
 
 void teclado_task(void *pvParameters) {
-    gpio_num_t keypad[8] = {6, 7, 15, 16, 3, 14, 13, 12};
+    gpio_num_t keypad[8] = {6, 7, 15, 16, 8, 14, 13, 12};
     
     esp_err_t init_result = keypad_initalize(keypad);
     if (init_result != ESP_OK) {

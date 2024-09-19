@@ -1,4 +1,4 @@
-# Install script for directory: /home/pepe/Sistema_Asistencia_Biometrico/main
+# Install script for directory: /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main
 
 # Set the install prefix
 if(NOT DEFINED CMAKE_INSTALL_PREFIX)

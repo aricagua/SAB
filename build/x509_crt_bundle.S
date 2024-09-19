@@ -1,4 +1,4 @@
-/* * Data converted from /home/pepe/Sistema_Asistencia_Biometrico/build/esp-idf/mbedtls/x509_crt_bundle
+/* * Data converted from /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/esp-idf/mbedtls/x509_crt_bundle
  */
 .data
 #if !defined (__APPLE__) && !defined (__linux__)
