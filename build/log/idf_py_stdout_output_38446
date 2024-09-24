@@ -1,0 +1,87 @@
+[1/10] Performing build step for 'bootloader'
+[1/1] cd /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/bootloader/esp-idf/esptool_py && /home/pepe/.espressif/python_env/idf5.3_py3.10_env/bin/python /home/pepe/esp/esp-idf/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/bootloader/bootloader.bin
+Bootloader binary size 0x5260 bytes. 0x2da0 bytes (36%) free.
+[2/8] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj
+FAILED: esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj 
+/home/pepe/.espressif/tools/xtensa-esp-elf/esp-13.2.0_20240530/xtensa-esp-elf/bin/xtensa-esp32s3-elf-gcc -DESP_PLATFORM -DIDF_VER=\"v5.3-357-g6568f8c553\" -DSOC_MMU_PAGE_SIZE=CONFIG_MMU_PAGE_SIZE -DSOC_XTAL_FREQ_MHZ=CONFIG_XTAL_FREQ -D_GLIBCXX_HAVE_POSIX_SEMAPHORE -D_GLIBCXX_USE_POSIX_SEMAPHORE -D_GNU_SOURCE -D_POSIX_READER_WRITER_LOCKS -I/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/config -I/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main -I/home/pepe/esp/esp-idf/components/newlib/platform_include -I/home/pepe/esp/esp-idf/components/freertos/config/include -I/home/pepe/esp/esp-idf/components/freertos/config/include/freertos -I/home/pepe/esp/esp-idf/components/freertos/config/xtensa/include -I/home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/include -I/home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include -I/home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos -I/home/pepe/esp/esp-idf/components/freertos/esp_additions/include -I/home/pepe/esp/esp-idf/components/esp_hw_support/include -I/home/pepe/esp/esp-idf/components/esp_hw_support/include/soc -I/home/pepe/esp/esp-idf/components/esp_hw_support/include/soc/esp32s3 -I/home/pepe/esp/esp-idf/components/esp_hw_support/dma/include -I/home/pepe/esp/esp-idf/components/esp_hw_support/ldo/include -I/home/pepe/esp/esp-idf/components/esp_hw_support/port/esp32s3/. -I/home/pepe/esp/esp-idf/components/esp_hw_support/port/esp32s3/include -I/home/pepe/esp/esp-idf/components/heap/include -I/home/pepe/esp/esp-idf/components/log/include -I/home/pepe/esp/esp-idf/components/soc/include -I/home/pepe/esp/esp-idf/components/soc/esp32s3 -I/home/pepe/esp/esp-idf/components/soc/esp32s3/include -I/home/pepe/esp/esp-idf/components/hal/platform_port/include -I/home/pepe/esp/esp-idf/components/hal/esp32s3/include -I/home/pepe/esp/esp-idf/components/hal/include -I/home/pepe/esp/esp-idf/components/esp_rom/include -I/home/pepe/esp/esp-idf/components/esp_rom/include/esp32s3 -I/home/pepe/esp/esp-idf/components/esp_rom/esp32s3 -I/home/pepe/esp/esp-idf/components/esp_common/include -I/home/pepe/esp/esp-idf/components/esp_system/include -I/home/pepe/esp/esp-idf/components/esp_system/port/soc -I/home/pepe/esp/esp-idf/components/esp_system/port/include/private -I/home/pepe/esp/esp-idf/components/xtensa/esp32s3/include -I/home/pepe/esp/esp-idf/components/xtensa/include -I/home/pepe/esp/esp-idf/components/xtensa/deprecated_include -I/home/pepe/esp/esp-idf/components/lwip/include -I/home/pepe/esp/esp-idf/components/lwip/include/apps -I/home/pepe/esp/esp-idf/components/lwip/include/apps/sntp -I/home/pepe/esp/esp-idf/components/lwip/lwip/src/include -I/home/pepe/esp/esp-idf/components/lwip/port/include -I/home/pepe/esp/esp-idf/components/lwip/port/freertos/include -I/home/pepe/esp/esp-idf/components/lwip/port/esp32xx/include -I/home/pepe/esp/esp-idf/components/lwip/port/esp32xx/include/arch -I/home/pepe/esp/esp-idf/components/lwip/port/esp32xx/include/sys -I/home/pepe/esp/esp-idf/components/esp_timer/include -I/home/pepe/esp/esp-idf/components/driver/deprecated -I/home/pepe/esp/esp-idf/components/driver/i2c/include -I/home/pepe/esp/esp-idf/components/driver/touch_sensor/include -I/home/pepe/esp/esp-idf/components/driver/twai/include -I/home/pepe/esp/esp-idf/components/driver/touch_sensor/esp32s3/include -I/home/pepe/esp/esp-idf/components/esp_pm/include -I/home/pepe/esp/esp-idf/components/esp_ringbuf/include -I/home/pepe/esp/esp-idf/components/esp_driver_gpio/include -I/home/pepe/esp/esp-idf/components/esp_driver_pcnt/include -I/home/pepe/esp/esp-idf/components/esp_driver_gptimer/include -I/home/pepe/esp/esp-idf/components/esp_driver_spi/include -I/home/pepe/esp/esp-idf/components/esp_driver_mcpwm/include -I/home/pepe/esp/esp-idf/components/esp_driver_ana_cmpr/include -I/home/pepe/esp/esp-idf/components/esp_driver_i2s/include -I/home/pepe/esp/esp-idf/components/esp_driver_sdmmc/include -I/home/pepe/esp/esp-idf/components/sdmmc/include -I/home/pepe/esp/esp-idf/components/esp_driver_sdspi/include -I/home/pepe/esp/esp-idf/components/esp_driver_sdio/include -I/home/pepe/esp/esp-idf/components/esp_driver_dac/include -I/home/pepe/esp/esp-idf/components/esp_driver_rmt/include -I/home/pepe/esp/esp-idf/components/esp_driver_tsens/include -I/home/pepe/esp/esp-idf/components/esp_driver_sdm/include -I/home/pepe/esp/esp-idf/components/esp_driver_i2c/include -I/home/pepe/esp/esp-idf/components/esp_driver_uart/include -I/home/pepe/esp/esp-idf/components/vfs/include -I/home/pepe/esp/esp-idf/components/esp_driver_ledc/include -I/home/pepe/esp/esp-idf/components/esp_driver_parlio/include -I/home/pepe/esp/esp-idf/components/esp_driver_usb_serial_jtag/include -I/home/pepe/esp/esp-idf/components/fatfs/diskio -I/home/pepe/esp/esp-idf/components/fatfs/src -I/home/pepe/esp/esp-idf/components/fatfs/vfs -I/home/pepe/esp/esp-idf/components/wear_levelling/include -I/home/pepe/esp/esp-idf/components/esp_partition/include -I/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/components/sd_card -I/home/pepe/esp/esp-idf/components/esp_adc/include -I/home/pepe/esp/esp-idf/components/esp_adc/interface -I/home/pepe/esp/esp-idf/components/esp_adc/esp32s3/include -I/home/pepe/esp/esp-idf/components/esp_adc/deprecated/include -I/home/pepe/esp/esp-idf/components/json/cJSON -I/home/pepe/esp/esp-idf/components/esp_http_client/include -I/home/pepe/esp/esp-idf/components/esp_event/include -I/home/pepe/esp/esp-idf/components/esp_wifi/include -I/home/pepe/esp/esp-idf/components/esp_wifi/wifi_apps/include -I/home/pepe/esp/esp-idf/components/esp_wifi/wifi_apps/nan_app/include -I/home/pepe/esp/esp-idf/components/esp_wifi/include/local -I/home/pepe/esp/esp-idf/components/esp_phy/include -I/home/pepe/esp/esp-idf/components/esp_phy/esp32s3/include -I/home/pepe/esp/esp-idf/components/esp_netif/include -I/home/pepe/esp/esp-idf/components/nvs_flash/include -I/home/pepe/esp/esp-idf/components/spi_flash/include -mlongcalls  -fno-builtin-memcpy -fno-builtin-memset -fno-builtin-bzero -fno-builtin-stpcpy -fno-builtin-strncpy -ffunction-sections -fdata-sections -Wall -Werror=all -Wno-error=unused-function -Wno-error=unused-variable -Wno-error=unused-but-set-variable -Wno-error=deprecated-declarations -Wextra -Wno-unused-parameter -Wno-sign-compare -Wno-enum-conversion -gdwarf-4 -ggdb -Og -fno-shrink-wrap -fmacro-prefix-map=/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico=. -fmacro-prefix-map=/home/pepe/esp/esp-idf=/IDF -fstrict-volatile-bitfields -fno-jump-tables -fno-tree-switch-conversion -std=gnu17 -Wno-old-style-declaration -MD -MT esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj -MF esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj.d -o esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj -c /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c: In function 'teclado_task':
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:785:13: error: invalid storage class for function 'event_handler'
+  785 | static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
+      |             ^~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:918:1: error: expected declaration or statement at end of input
+  918 | }
+      | ^
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c: At top level:
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:135:13: warning: 'event_handler' declared 'static' but never defined [-Wunused-function]
+  135 | static void event_handler(void* arg, esp_event_base_t event_base,
+      |             ^~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:891:11: warning: 'load_user_data_txt' defined but not used [-Wunused-function]
+  891 | esp_err_t load_user_data_txt(DatosUsuario *usuario, const char *cedula)
+      |           ^~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:868:11: warning: 'save_user_data' defined but not used [-Wunused-function]
+  868 | esp_err_t save_user_data(const char *mount_point, const DatosUsuario *usuario)
+      |           ^~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:825:11: warning: 'mount_sdcard' defined but not used [-Wunused-function]
+  825 | esp_err_t mount_sdcard(void)
+      |           ^~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:798:6: warning: 'wifi_init_sta' defined but not used [-Wunused-function]
+  798 | void wifi_init_sta(void) {
+      |      ^~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:745:11: warning: 'register_fingerprint' defined but not used [-Wunused-function]
+  745 | esp_err_t register_fingerprint(uint16_t *page_number)
+      |           ^~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:719:11: warning: 'delete_fingerprint' defined but not used [-Wunused-function]
+  719 | esp_err_t delete_fingerprint(uint16_t page_number)
+      |           ^~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:714:9: warning: 'get_centered_position' defined but not used [-Wunused-function]
+  714 | int16_t get_centered_position(const char* text) {
+      |         ^~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:696:6: warning: 'dibujar_error_borrado' defined but not used [-Wunused-function]
+  696 | void dibujar_error_borrado() {
+      |      ^~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:689:6: warning: 'dibujar_borrado_exitoso' defined but not used [-Wunused-function]
+  689 | void dibujar_borrado_exitoso() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:675:6: warning: 'dibujar_borrar_huella' defined but not used [-Wunused-function]
+  675 | void dibujar_borrar_huella() {
+      |      ^~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:668:6: warning: 'dibujar_registro_exitoso' defined but not used [-Wunused-function]
+  668 | void dibujar_registro_exitoso() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:660:6: warning: 'dibujar_error_registro' defined but not used [-Wunused-function]
+  660 | void dibujar_error_registro() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:643:6: warning: 'dibujar_resumen_registro' defined but not used [-Wunused-function]
+  643 | void dibujar_resumen_registro() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:635:6: warning: 'dibujar_asistencia' defined but not used [-Wunused-function]
+  635 | void dibujar_asistencia() {
+      |      ^~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:627:6: warning: 'dibujar_seleccionar_tipo' defined but not used [-Wunused-function]
+  627 | void dibujar_seleccionar_tipo() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:613:6: warning: 'dibujar_ingresar_pin' defined but not used [-Wunused-function]
+  613 | void dibujar_ingresar_pin() {
+      |      ^~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:600:6: warning: 'dibujar_ingresar_huella' defined but not used [-Wunused-function]
+  600 | void dibujar_ingresar_huella() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:585:6: warning: 'dibujar_ingresar_cedula' defined but not used [-Wunused-function]
+  585 | void dibujar_ingresar_cedula() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:551:6: warning: 'dibujar_menu_registrar_usuario' defined but not used [-Wunused-function]
+  551 | void dibujar_menu_registrar_usuario() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:537:6: warning: 'dibujar_ingresar_pin_admin' defined but not used [-Wunused-function]
+  537 | void dibujar_ingresar_pin_admin() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:523:6: warning: 'dibujar_menu_configuracion' defined but not used [-Wunused-function]
+  523 | void dibujar_menu_configuracion() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:514:6: warning: 'dibujar_menu_principal' defined but not used [-Wunused-function]
+  514 | void dibujar_menu_principal() {
+      |      ^~~~~~~~~~~~~~~~~~~~~~
+/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:433:6: warning: 'pantalla_task' defined but not used [-Wunused-function]
+  433 | void pantalla_task(void *pvParameters) {
+      |      ^~~~~~~~~~~~~
+ninja: build stopped: subcommand failed.
