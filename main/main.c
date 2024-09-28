@@ -29,7 +29,8 @@
 #include <sys/stat.h>
 #include "sdkconfig.h"
 #include "nvs.h"
-
+#include "common.h"
+#include "draw.h"
 #define NVS_NAMESPACE "user_data"
 // Constants and definitions
 #define FIREBASE_HOST "https://users-89d5a-default-rtdb.firebaseio.com"
@@ -57,6 +58,7 @@
 
 static const char *TAG = "main";
 
+sdmmc_card_t *card = NULL;
 
 
 // WiFi event group
@@ -65,70 +67,22 @@ static EventGroupHandle_t s_wifi_event_group;
 #define WIFI_FAIL_BIT      BIT1
 
 
-// Enums and structs
-typedef enum {
-    ESTADO_BIENVENIDA,
-    ESTADO_PRINCIPAL,
-    ESTADO_INGRESAR_PIN_ADMIN,
-    ESTADO_CONFIGURACION,
-    ESTADO_REGISTRAR_USUARIO,
-    ESTADO_INGRESAR_CEDULA,
-    ESTADO_INGRESAR_HUELLA,
-    ESTADO_INGRESAR_PIN,
-    ESTADO_SELECCIONAR_TIPO,
-    ESTADO_RESUMEN_REGISTRO,
-    ESTADO_ASISTENCIA,
-    ESTADO_ERROR_REGISTRO,
-    ESTADO_REGISTRO_EXITOSO,
-    ESTADO_BORRAR_HUELLA,
-    ESTADO_BORRADO_EXITOSO,
-    ESTADO_ERROR_BORRADO
-} EstadoMenu;
-
-
-typedef struct {
-    char cedula[20];
-    bool huella_registrada;
-    uint16_t huella_pagina;
-    char pin[5];
-    char tipo[20];
-} DatosUsuario;
-
-
-
 // Global variables
-static EstadoMenu estado_actual = ESTADO_BIENVENIDA;
-static int opcion_seleccionada = 1;
-static DatosUsuario usuario_actual = {0};
-static int input_index = 0;
-static char admin_pin_input[5] = {0};
-static uint16_t page_to_delete = 0;
-static bool as608_initialized = false;
+// In main.c
+EstadoMenu estado_actual = ESTADO_BIENVENIDA;
+DatosUsuario usuario_actual = {0};
+char admin_pin_input[5] = {0};
+uint16_t page_to_delete = 0;
+bool as608_initialized = false;
+int input_index = 0;
 
 
 // Function prototypes
 void pantalla_task(void *pvParameters);
 void teclado_task(void *pvParameters);
-int text_length(const char* text);
-int16_t get_centered_position(const char* text);
+
 void wifi_init_sta();
 
-
-void dibujar_menu_principal();
-void dibujar_menu_configuracion();
-void dibujar_ingresar_pin_admin();
-void dibujar_menu_registrar_usuario();
-void dibujar_ingresar_cedula();
-void dibujar_ingresar_huella();
-void dibujar_ingresar_pin();
-void dibujar_seleccionar_tipo();
-void dibujar_resumen_registro();
-void dibujar_asistencia();
-void dibujar_registro_exitoso();
-void dibujar_error_registro();
-void dibujar_borrado_exitoso();
-void dibujar_borrar_huella();
-void dibujar_error_borrado();
 void print_nvs_stats();
 
 
@@ -140,6 +94,8 @@ esp_err_t register_fingerprint(uint16_t *page_number);
 esp_err_t mount_sdcard(void);
 esp_err_t save_user_data(const char *mount_point, const DatosUsuario *usuario);
 esp_err_t load_user_data_txt(DatosUsuario *usuario, const char *cedula);
+esp_err_t delete_all_fingerprints(void);
+esp_err_t format_sd_card(const char *mount_point);
 
 const char* data = "Callback function called";
 /*************************sd************************************/
@@ -251,7 +207,7 @@ void teclado_task(void *pvParameters) {
                                     estado_actual = ESTADO_ASISTENCIA;
                                     break;
                                 case 5:
-                                    estado_actual = ESTADO_BORRAR_HUELLA;
+                                    estado_actual = ESTADO_RESETEAR_SISTEMA;
                                     break;
                             }
                         } else if(keypressed == 'B') {
@@ -259,36 +215,24 @@ void teclado_task(void *pvParameters) {
                             opcion_seleccionada = 1;
                         }
                         break;
-                case ESTADO_BORRAR_HUELLA:
-                    if(keypressed >= '0' && keypressed <= '9') {
-                        // Accumulate the page number, but check for overflow
-                        uint32_t new_page = page_to_delete * 10 + (keypressed - '0');
-                        if (new_page <= UINT16_MAX) {
-                            page_to_delete = (uint16_t)new_page;
-                        }
-                    } else if(keypressed == 'A') {
-                        // Attempt to delete the fingerprint
-                        esp_err_t result = delete_fingerprint(page_to_delete);
-                        if (result == ESP_OK) {
-                            estado_actual = ESTADO_BORRADO_EXITOSO;
+                // Add a new case for ESTADO_RESETEAR_SISTEMA
+                case ESTADO_RESETEAR_SISTEMA:
+                    if(keypressed == 'A') {
+                        esp_err_t fingerprint_result = delete_all_fingerprints();
+                        esp_err_t sd_result = format_sd_card(MOUNT_POINT);
+                        if (fingerprint_result == ESP_OK && sd_result == ESP_OK) {
+                            estado_actual = ESTADO_RESET_EXITOSO;
                         } else {
-                            estado_actual = ESTADO_ERROR_BORRADO;
+                            estado_actual = ESTADO_ERROR_RESET;
                         }
-                        page_to_delete = 0;  // Reset for next use
                     } else if(keypressed == 'B') {
                         estado_actual = ESTADO_CONFIGURACION;
                         opcion_seleccionada = 1;
-                        page_to_delete = 0;  // Reset when going back
-                    } else if(keypressed == 'D') {
-                        // Allow user to correct input
-                        page_to_delete /= 10;
                     }
                     break;
-                case ESTADO_BORRADO_EXITOSO:
-                    estado_actual = ESTADO_CONFIGURACION;
-                    opcion_seleccionada = 1;
-                    break;
-                case ESTADO_ERROR_BORRADO:
+
+                case ESTADO_RESET_EXITOSO:
+                case ESTADO_ERROR_RESET:
                     if(keypressed == 'A') {
                         estado_actual = ESTADO_CONFIGURACION;
                         opcion_seleccionada = 1;
@@ -473,14 +417,14 @@ void pantalla_task(void *pvParameters) {
                 case ESTADO_REGISTRO_EXITOSO:
                     dibujar_registro_exitoso();
                     break;
-                case ESTADO_BORRAR_HUELLA:
-                    dibujar_borrar_huella();
+                case ESTADO_RESETEAR_SISTEMA:
+                    dibujar_resetear_sistema();
                     break;
-                case ESTADO_BORRADO_EXITOSO:
-                    dibujar_borrado_exitoso();
+                case ESTADO_RESET_EXITOSO:
+                    dibujar_reset_exitoso();
                     break;
-                case ESTADO_ERROR_BORRADO:
-                    dibujar_error_borrado();
+                case ESTADO_ERROR_RESET:
+                    dibujar_error_reset();
                     break;
                 default:
                     ESP_LOGE("PANTALLA", "Estado no manejado: %d", estado_actual);
@@ -499,210 +443,9 @@ void pantalla_task(void *pvParameters) {
     }
 }
 
-void dibujar_menu_principal() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("BIENVENIDO"), 0, "BIENVENIDO", ST7735_WHITE, ST7735_BLACK, 1);
-    char fecha_hora[30];
-    snprintf(fecha_hora, sizeof(fecha_hora), "Agosto 10 de 2024 20:00");
-    TFTdrawText(get_centered_position(fecha_hora), SCREEN_HEIGHT/2, fecha_hora, ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "C: Configuracion", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_menu_configuracion() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("CONFIGURACION"), 0, "CONFIGURACION", ST7735_WHITE, ST7735_BLACK, 1);
-    const char* opciones[] = {"1. REGISTRAR USUARIO", "2. BUSCAR USUARIO", "3. CONF. AVANZADA", "4. ASISTENCIA", "5. BORRAR HUELLA"};
-    for(int i = 0; i < 5; i++) {
-        uint16_t bgColor = (i == opcion_seleccionada - 1) ? ST7735_BLUE : ST7735_BLACK;
-        uint16_t textColor = ST7735_WHITE;
-        TFTdrawText(0, 20 + i*20, (char*)opciones[i], textColor, bgColor, 1);
-    }
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Entrar B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
 
 
 
-void dibujar_ingresar_pin_admin() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("INGRESE PIN ADMIN"), 0, "INGRESE PIN ADMIN", ST7735_WHITE, ST7735_BLACK, 1);
-    
-    char pin_display[5] = "____";
-    for (int i = 0; i < strlen(admin_pin_input); i++) {
-        pin_display[i] = '*';
-    }
-    
-    TFTdrawText(get_centered_position(pin_display), SCREEN_HEIGHT / 2 - CHAR_HEIGHT / 2, pin_display, ST7735_WHITE, ST7735_BLACK, 1);
-    
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Confirmar B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_menu_registrar_usuario() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("REGISTRAR USUARIO"), 0, "REGISTRAR USUARIO", ST7735_WHITE, ST7735_BLACK, 1);
-    const char* opciones[] = {"1. CEDULA", "2. HUELLA", "3. PIN", "4. TIPO"};
-    for(int i = 0; i < 4; i++) {
-        uint16_t bgColor = (i == opcion_seleccionada - 1) ? ST7735_BLUE : ST7735_BLACK;
-        uint16_t textColor = ST7735_WHITE;
-        TFTdrawText(0, 20 + i*20, (char*)opciones[i], textColor, bgColor, 1);
-        
-        char valor[30] = "NULO";
-        switch(i) {
-            case 0: 
-                if(strlen(usuario_actual.cedula) > 0) 
-                    snprintf(valor, sizeof(valor), "%s", usuario_actual.cedula);
-                break;
-            case 1: 
-                if(usuario_actual.huella_registrada)
-                    snprintf(valor, sizeof(valor), "REGISTRADA");
-                break;
-            case 2:
-                if(strlen(usuario_actual.pin) > 0)
-                    snprintf(valor, sizeof(valor), "%s", usuario_actual.pin);
-                break;
-            case 3:
-                if(strlen(usuario_actual.tipo) > 0)
-                    snprintf(valor, sizeof(valor), "%s", usuario_actual.tipo);
-                break;
-        }
-        TFTdrawText(SCREEN_WIDTH/2, 20 + i*20, valor, ST7735_WHITE, ST7735_BLACK, 1);
-    }
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT * 2, "A: Entrar B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "C: Guardar", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_ingresar_cedula() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("INGRESAR CEDULA"), 0, "INGRESAR CEDULA", ST7735_WHITE, ST7735_BLACK, 1);
-    
-    char cedula_display[21] = {0};
-    strncpy(cedula_display, usuario_actual.cedula, sizeof(cedula_display) - 1);
-    for (int i = strlen(cedula_display); i < 20; i++) {
-        cedula_display[i] = '_';
-    }
-    
-    TFTdrawText(get_centered_position(cedula_display), SCREEN_HEIGHT / 2 - CHAR_HEIGHT / 2, cedula_display, ST7735_WHITE, ST7735_BLACK, 1);
-    
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Confirmar B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_ingresar_huella() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("INGRESAR HUELLA"), 0, "INGRESAR HUELLA", ST7735_WHITE, ST7735_BLACK, 1);
-    if (as608_initialized) {
-        TFTdrawText(get_centered_position("COLOQUE SU HUELLA"), SCREEN_HEIGHT / 2 - CHAR_HEIGHT, "COLOQUE SU HUELLA", ST7735_WHITE, ST7735_BLACK, 1);
-        TFTdrawText(get_centered_position("EN EL SENSOR"), SCREEN_HEIGHT / 2 + CHAR_HEIGHT, "EN EL SENSOR", ST7735_WHITE, ST7735_BLACK, 1);
-    } else {
-        TFTdrawText(get_centered_position("SENSOR NO"), SCREEN_HEIGHT / 2 - CHAR_HEIGHT, "SENSOR NO", ST7735_RED, ST7735_BLACK, 1);
-        TFTdrawText(get_centered_position("INICIALIZADO"), SCREEN_HEIGHT / 2 + CHAR_HEIGHT, "INICIALIZADO", ST7735_RED, ST7735_BLACK, 1);
-    }
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Confirmar B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_ingresar_pin() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("INGRESAR PIN"), 0, "INGRESAR PIN", ST7735_WHITE, ST7735_BLACK, 1);
-    
-    char pin_display[5] = "____";
-    for (int i = 0; i < strlen(usuario_actual.pin); i++) {
-        pin_display[i] = '*';
-    }
-    
-    TFTdrawText(get_centered_position(pin_display), SCREEN_HEIGHT / 2 - CHAR_HEIGHT / 2, pin_display, ST7735_WHITE, ST7735_BLACK, 1);
-    
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Confirmar B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_seleccionar_tipo() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("SELECCIONAR TIPO"), 0, "SELECCIONAR TIPO", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT / 2 - CHAR_HEIGHT, "1. ADMINISTRADOR", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT / 2 + CHAR_HEIGHT, "2. USUARIO", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_asistencia() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("ASISTENCIA"), 0, "ASISTENCIA", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("Funcionalidad"), SCREEN_HEIGHT / 2 - CHAR_HEIGHT, "Funcionalidad", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("no implementada"), SCREEN_HEIGHT / 2 + CHAR_HEIGHT, "no implementada", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_resumen_registro() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("RESUMEN REGISTRO"), 0, "RESUMEN REGISTRO", ST7735_WHITE, ST7735_BLACK, 1);
-    
-    char resumen[4][30];
-    snprintf(resumen[0], sizeof(resumen[0]), "Cedula: %s", strlen(usuario_actual.cedula) > 0 ? usuario_actual.cedula : "NULO");
-    snprintf(resumen[1], sizeof(resumen[1]), "Huella: %s", usuario_actual.huella_registrada ? "REGISTRADA" : "NULO");
-    snprintf(resumen[2], sizeof(resumen[2]), "PIN: %s", strlen(usuario_actual.pin) > 0 ? "****" : "NULO");
-    snprintf(resumen[3], sizeof(resumen[3]), "Tipo: %s", strlen(usuario_actual.tipo) > 0 ? usuario_actual.tipo : "NULO");
-    
-    for (int i = 0; i < 4; i++) {
-        TFTdrawText(0, 30 + i*20, resumen[i], ST7735_WHITE, ST7735_BLACK, 1);
-    }
-    
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Guardar B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_error_registro() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("ERROR"), 0, "ERROR", ST7735_RED, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("FALTAN DATOS"), SCREEN_HEIGHT / 2 - CHAR_HEIGHT, "FALTAN DATOS", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("O HUBO UN ERROR"), SCREEN_HEIGHT / 2 + CHAR_HEIGHT, "O HUBO UN ERROR", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_registro_exitoso() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("REGISTRO"), 0, "REGISTRO", ST7735_GREEN, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("EXITOSO"), SCREEN_HEIGHT / 2, "EXITOSO", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_borrar_huella() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("BORRAR HUELLA"), 0, "BORRAR HUELLA", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("Ingrese pagina"), SCREEN_HEIGHT / 2 - CHAR_HEIGHT * 2, "Ingrese pagina", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("a borrar:"), SCREEN_HEIGHT / 2 - CHAR_HEIGHT, "a borrar:", ST7735_WHITE, ST7735_BLACK, 1);
-    
-    char page_str[7];  // Increased buffer size to accommodate up to 5 digits + null terminator
-    snprintf(page_str, sizeof(page_str), "%u", page_to_delete);  // Use %u for unsigned int
-    TFTdrawText(get_centered_position(page_str), SCREEN_HEIGHT / 2 + CHAR_HEIGHT, page_str, ST7735_WHITE, ST7735_BLACK, 1);
-    
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT * 2, "A: Borrar B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "D: Corregir", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_borrado_exitoso() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("HUELLA BORRADA"), 0, "HUELLA BORRADA", ST7735_GREEN, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("EXITOSAMENTE"), SCREEN_HEIGHT / 2, "EXITOSAMENTE", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-void dibujar_error_borrado() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("ERROR"), 0, "ERROR", ST7735_RED, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("AL BORRAR"), SCREEN_HEIGHT / 2 - CHAR_HEIGHT, "AL BORRAR", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("HUELLA"), SCREEN_HEIGHT / 2 + CHAR_HEIGHT, "HUELLA", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
-
-
-int text_length(const char* text) {
-    int length = 0;
-    while (*text != '\0') {
-        length++;
-        text++;
-    }
-    return length;
-}
-
-int16_t get_centered_position(const char* text) {
-    int text_width = text_length(text) * CHAR_WIDTH;
-    return (SCREEN_WIDTH - text_width) / 2;
-}
 
 esp_err_t delete_fingerprint(uint16_t page_number)
 {
@@ -818,11 +561,9 @@ esp_err_t mount_sdcard(void)
         .max_files = 5,
         .allocation_unit_size = 16 * 1024
     };
-    sdmmc_card_t *card;
     const char mount_point[] = MOUNT_POINT;
     ESP_LOGI(TAG, "Initializing SD card");
 
-    // Customize the SPI host configuration
     sdmmc_host_t host = SDSPI_HOST_DEFAULT();
     host.max_freq_khz = 5000;  // Set the SPI frequency to 10 MHz (10,000 kHz)
 
@@ -865,7 +606,7 @@ esp_err_t save_user_data(const char *mount_point, const DatosUsuario *usuario)
     char file_path[64];
     
     // Format the file path using huella_pagina as an integer
-    snprintf(file_path, sizeof(file_path), "%s/user_%d.bin", mount_point, usuario->huella_pagina);
+    snprintf(file_path, sizeof(file_path), "%s/user_%d.txt", mount_point, usuario->huella_pagina);
     
     
     ESP_LOGI(TAG, "Opening file %s", file_path);
@@ -914,4 +655,72 @@ esp_err_t load_user_data_txt(DatosUsuario *usuario, const char *cedula)
     ESP_LOGI(TAG, "File read");
     return ESP_OK;
 }
+
+esp_err_t delete_all_fingerprints(void)
+{
+    uint8_t res;
+    as608_status_t status;
+
+    ESP_LOGI("FINGERPRINT", "Attempting to delete all fingerprints");
+
+    // Use the AS608 function to delete all fingerprints at once
+    res = as608_basic_empty_fingerprint(&status);
+
+    if (res != 0) {
+        ESP_LOGE("FINGERPRINT", "Failed to delete all fingerprints. Error code: %d", res);
+        return ESP_FAIL;
+    }
+
+    if (status != AS608_STATUS_OK) {
+        ESP_LOGE("FINGERPRINT", "Fingerprint deletion failed. Status: %d", status);
+        return ESP_FAIL;
+    }
+
+    ESP_LOGI("FINGERPRINT", "All fingerprints deleted successfully");
+    return ESP_OK;
+}
+	
+esp_err_t format_sd_card(const char *mount_point)
+{
+    esp_err_t ret;
+
+    // Check if the card is mounted
+    struct stat st;
+    if (stat(mount_point, &st) != 0) {
+        ESP_LOGE(TAG, "SD card is not mounted");
+        return ESP_ERR_INVALID_STATE;
+    }
+
+    // Perform the formatting
+    ESP_LOGI(TAG, "Formatting SD card...");
+    ret = esp_vfs_fat_sdcard_format(mount_point, NULL);
+    if (ret != ESP_OK) {
+        ESP_LOGE(TAG, "Failed to format SD card (%s)", esp_err_to_name(ret));
+        return ret;
+    }
+
+    ESP_LOGI(TAG, "SD card formatted successfully");
+
+    // Verify that the card is empty
+    DIR *dir = opendir(mount_point);
+    if (dir) {
+        struct dirent *ent;
+        bool is_empty = true;
+        while ((ent = readdir(dir)) != NULL) {
+            if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0) {
+                is_empty = false;
+                break;
+            }
+        }
+        closedir(dir);
+        if (!is_empty) {
+            ESP_LOGW(TAG, "SD card was formatted but still contains files");
+        }
+    } else {
+        ESP_LOGW(TAG, "Unable to open formatted SD card directory");
+    }
+
+    return ESP_OK;
+}
+
 
