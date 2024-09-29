@@ -31,8 +31,10 @@
 #include "nvs.h"
 #include "common.h"
 #include "draw.h"
+#include <inttypes.h>
 
 #define NVS_NAMESPACE "user_data"
+#define MAX_USERS 100 
 // Constants and definitions
 #define FIREBASE_HOST "https://users-89d5a-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "your-database-secret"
@@ -96,12 +98,15 @@ static void event_handler(void* arg, esp_event_base_t event_base,
 esp_err_t delete_fingerprint(uint16_t page_number);
 esp_err_t register_fingerprint(uint16_t *page_number); 
 esp_err_t mount_sdcard(void);
-esp_err_t save_user_data(const char *mount_point, const DatosUsuario *usuario);
-esp_err_t load_user_data_txt(DatosUsuario *usuario, const char *cedula);
+
 esp_err_t delete_all_fingerprints(void);
 esp_err_t format_sd_card(const char *mount_point);
 esp_err_t register_attendance(uint16_t page_number);
 void estado_asistencia_task(void *pvParameters);
+esp_err_t erase_all_user_data_nvs();
+esp_err_t load_user_data_nvs(DatosUsuario *usuario, uint16_t huella_pagina);
+esp_err_t save_user_data_nvs(const DatosUsuario *usuario);
+esp_err_t register_attendance_nvs(const DatosUsuario *usuario);
 
 const char* data = "Callback function called";
 /*************************sd************************************/
@@ -229,8 +234,8 @@ void teclado_task(void *pvParameters) {
                 case ESTADO_RESETEAR_SISTEMA:
                     if(keypressed == 'A') {
                         esp_err_t fingerprint_result = delete_all_fingerprints();
-                        esp_err_t sd_result = format_sd_card(MOUNT_POINT);
-                        if (fingerprint_result == ESP_OK && sd_result == ESP_OK) {
+                        esp_err_t nvs_result = erase_all_user_data_nvs();
+                        if (fingerprint_result == ESP_OK && nvs_result == ESP_OK) {
                             estado_actual = ESTADO_RESET_EXITOSO;
                         } else {
                             estado_actual = ESTADO_ERROR_RESET;
@@ -274,7 +279,7 @@ void teclado_task(void *pvParameters) {
                     } else  if(keypressed == 'C') {
                         if(strlen(usuario_actual.cedula) > 0 && usuario_actual.huella_registrada &&
                            strlen(usuario_actual.pin) > 0 && strlen(usuario_actual.tipo) > 0) {
-                            esp_err_t ret = save_user_data(MOUNT_POINT, &usuario_actual);
+                            esp_err_t ret = save_user_data_nvs(&usuario_actual);
                             if (ret == ESP_OK) {
                                 estado_actual = ESTADO_REGISTRO_EXITOSO;
                             } else {
@@ -454,10 +459,6 @@ void pantalla_task(void *pvParameters) {
     }
 }
 
-
-
-
-
 esp_err_t delete_fingerprint(uint16_t page_number)
 {
     uint8_t res;
@@ -608,62 +609,46 @@ esp_err_t mount_sdcard(void)
     return ESP_OK;
 }
 
+esp_err_t save_user_data_nvs(const DatosUsuario *usuario) {
+    nvs_handle_t nvs_handle;
+    esp_err_t err;
 
-esp_err_t save_user_data(const char *mount_point, const DatosUsuario *usuario)
-{
+    // Open NVS
+    err = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening NVS handle: %s", esp_err_to_name(err));
+        return err;
+    }
 
-    char file_path[64];
-    
-    // Format the file path using huella_pagina as an integer
-    snprintf(file_path, sizeof(file_path), "%s/user_%d.txt", mount_point, usuario->huella_pagina);
-    
-    
-    ESP_LOGI(TAG, "Opening file %s", file_path);
-    FILE *f = fopen(file_path, "w");
-    if (f == NULL) {
-        ESP_LOGE(TAG, "Failed to open file for writing");
-        return ESP_FAIL;
+    // Create a key for the user based on their fingerprint page number
+    char key[16];
+    snprintf(key, sizeof(key), "user_%d", usuario->huella_pagina);
+
+    // Write the user data to NVS
+    err = nvs_set_blob(nvs_handle, key, usuario, sizeof(DatosUsuario));
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error writing user data to NVS: %s", esp_err_to_name(err));
+        nvs_close(nvs_handle);
+        return err;
     }
-    
-    size_t written = fwrite(usuario, sizeof(DatosUsuario), 1, f);
-    fclose(f);
-    
-    if (written != 1) {
-        ESP_LOGE(TAG, "Failed to write struct to file");
-        return ESP_FAIL;
+
+    // Commit the changes
+    err = nvs_commit(nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error committing NVS changes: %s", esp_err_to_name(err));
+    } else {
+        ESP_LOGI(TAG, "User data saved successfully");
     }
-    
-    ESP_LOGI(TAG, "File written successfully");
-    return ESP_OK;
+
+    // Close NVS
+    nvs_close(nvs_handle);
+
+    return err;
 }
-esp_err_t load_user_data_txt(DatosUsuario *usuario, const char *cedula)
-{
-    char file_path[64];
-    snprintf(file_path, sizeof(file_path), MOUNT_POINT"/user_%s.txt", cedula);
-	
-    ESP_LOGI(TAG, "Opening file %s", file_path);
-    FILE *f = fopen(file_path, "r");
-    if (f == NULL) {
-        ESP_LOGE(TAG, "Failed to open file for reading");
-        return ESP_FAIL;
-    }
 
-    char line[64];
-    while (fgets(line, sizeof(line), f)) {
-        if (sscanf(line, "Cedula: %19s", usuario->cedula) == 1) continue;
-        if (sscanf(line, "Huella Registrada: %3s", line) == 1) {
-            usuario->huella_registrada = (strcmp(line, "Si") == 0);
-            continue;
-        }
-        if (sscanf(line, "Huella Pagina: %hu", &usuario->huella_pagina) == 1) continue;
-        if (sscanf(line, "PIN: %4s", usuario->pin) == 1) continue;
-        if (sscanf(line, "Tipo: %19s", usuario->tipo) == 1) continue;
-    }
 
-    fclose(f);
-    ESP_LOGI(TAG, "File read");
-    return ESP_OK;
-}
+
+
 
 esp_err_t delete_all_fingerprints(void)
 {
@@ -689,48 +674,6 @@ esp_err_t delete_all_fingerprints(void)
     return ESP_OK;
 }
 	
-esp_err_t format_sd_card(const char *mount_point)
-{
-    esp_err_t ret;
-
-    // Check if the card is mounted
-    struct stat st;
-    if (stat(mount_point, &st) != 0) {
-        ESP_LOGE(TAG, "SD card is not mounted");
-        return ESP_ERR_INVALID_STATE;
-    }
-
-    // Perform the formatting
-    ESP_LOGI(TAG, "Formatting SD card...");
-    ret = esp_vfs_fat_sdcard_format(mount_point, card);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to format SD card (%s)", esp_err_to_name(ret));
-        return ret;
-    }
-
-    ESP_LOGI(TAG, "SD card formatted successfully");
-
-    // Verify that the card is empty
-    DIR *dir = opendir(mount_point);
-    if (dir) {
-        struct dirent *ent;
-        bool is_empty = true;
-        while ((ent = readdir(dir)) != NULL) {
-            if (strcmp(ent->d_name, ".") != 0 && strcmp(ent->d_name, "..") != 0) {
-                is_empty = false;
-                break;
-            }
-        }
-        closedir(dir);
-        if (!is_empty) {
-            ESP_LOGW(TAG, "SD card was formatted but still contains files");
-        }
-    } else {
-        ESP_LOGW(TAG, "Unable to open formatted SD card directory");
-    }
-
-    return ESP_OK;
-}
 
 esp_err_t register_attendance(uint16_t page_number) {
     char user_file[64];
@@ -790,11 +733,23 @@ void estado_asistencia_task(void *pvParameters) {
         if (res == 0) {
             if (status == AS608_STATUS_OK) {
                 ESP_LOGI(TAG, "Fingerprint matched. Page: %d, Score: %d", found_page, score);
-                if (register_attendance(found_page) == ESP_OK) {
-                    dibujar_asistencia_registrada(found_page);
+                
+                // Load user data from NVS
+                DatosUsuario usuario;
+                esp_err_t err = load_user_data_nvs(&usuario, found_page);
+                
+                if (err == ESP_OK) {
+                    // Register attendance
+                    if (register_attendance_nvs(&usuario) == ESP_OK) {
+                        dibujar_asistencia_registrada(found_page);
+                    } else {
+                        dibujar_error_registro_asistencia();
+                    }
                 } else {
+                    ESP_LOGE(TAG, "Failed to load user data for page %d", found_page);
                     dibujar_error_registro_asistencia();
                 }
+                
                 retry_count = 0;
             } else {
                 ESP_LOGI(TAG, "Fingerprint not recognized. Status: %d", status);
@@ -822,4 +777,132 @@ void estado_asistencia_task(void *pvParameters) {
     }
 
     vTaskDelete(NULL);
+}
+
+esp_err_t erase_all_user_data_nvs() {
+    nvs_handle_t nvs_handle;
+    esp_err_t err;
+
+    // Open NVS
+    err = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening NVS handle: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    // Erase all keys in the specific namespace
+    err = nvs_erase_all(nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error erasing all keys in user data namespace: %s", esp_err_to_name(err));
+    } else {
+        // Commit the changes
+        err = nvs_commit(nvs_handle);
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "Error committing NVS changes: %s", esp_err_to_name(err));
+        } else {
+            ESP_LOGI(TAG, "All user data erased successfully");
+        }
+    }
+
+    // Close NVS
+    nvs_close(nvs_handle);
+
+    return err;
+}
+
+esp_err_t register_attendance_nvs(const DatosUsuario *usuario) {
+    time_t now;
+    time(&now);
+    struct tm timeinfo;
+    localtime_r(&now, &timeinfo);
+
+    // Create a log entry
+    char log_entry[128];
+    snprintf(log_entry, sizeof(log_entry), "%04d-%02d-%02d %02d:%02d:%02d, %s, %s",
+             timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday,
+             timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec,
+             usuario->cedula, usuario->tipo);
+
+    // Open NVS
+    nvs_handle_t nvs_handle;
+    esp_err_t err = nvs_open("attendance_log", NVS_READWRITE, &nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening NVS handle: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    // Get the current log count
+    uint32_t log_count = 0;
+    err = nvs_get_u32(nvs_handle, "log_count", &log_count);
+    if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND) {
+        ESP_LOGE(TAG, "Error reading log count: %s", esp_err_to_name(err));
+        nvs_close(nvs_handle);
+        return err;
+    }
+
+    // Create a key for this log entry
+    char key[16];
+    snprintf(key, sizeof(key), "log_%" PRIu32, log_count);
+
+    // Save the log entry
+    err = nvs_set_str(nvs_handle, key, log_entry);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error saving log entry: %s", esp_err_to_name(err));
+        nvs_close(nvs_handle);
+        return err;
+    }
+
+    // Increment and save the log count
+    log_count++;
+    err = nvs_set_u32(nvs_handle, "log_count", log_count);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error saving log count: %s", esp_err_to_name(err));
+        nvs_close(nvs_handle);
+        return err;
+    }
+
+    // Commit changes
+    err = nvs_commit(nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error committing NVS changes: %s", esp_err_to_name(err));
+    }
+
+    // Close NVS
+    nvs_close(nvs_handle);
+
+    if (err == ESP_OK) {
+        ESP_LOGI(TAG, "Attendance registered for user: %s", usuario->cedula);
+    }
+
+    return err;
+}
+
+esp_err_t load_user_data_nvs(DatosUsuario *usuario, uint16_t huella_pagina) {
+    nvs_handle_t nvs_handle;
+    esp_err_t err;
+
+    // Open NVS
+    err = nvs_open(NVS_NAMESPACE, NVS_READONLY, &nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening NVS handle: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    // Create the key for the user
+    char key[16];
+    snprintf(key, sizeof(key), "user_%d", huella_pagina);
+
+    // Read the user data from NVS
+    size_t required_size = sizeof(DatosUsuario);
+    err = nvs_get_blob(nvs_handle, key, usuario, &required_size);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error reading user data from NVS: %s", esp_err_to_name(err));
+    } else {
+        ESP_LOGI(TAG, "User data loaded successfully");
+    }
+
+    // Close NVS
+    nvs_close(nvs_handle);
+
+    return err;
 }
