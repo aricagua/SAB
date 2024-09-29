@@ -1,0 +1,27 @@
+[0;33m--- esp-idf-monitor 1.4.0 on /dev/ttyACM0 115200 ---[0m
+[0;33m--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---[0m
+[0;33m0x4201620b: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x42016628: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4038452b: spi_ll_master_set_line_mode at /home/pepe/esp/esp-idf/components/hal/esp32s3/include/hal/spi_ll.h:658
+0x40384abe: spi_hal_setup_trans at /home/pepe/esp/esp-idf/components/hal/spi_hal_iram.c:46
+0x4037a37c: spi_new_trans at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:773
+0x4037a7cb: spi_device_polling_start at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1376
+0x4037a896: spi_device_polling_transmit at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1431
+0x4201e41d: poll_busy at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:587
+0x4201e76e: start_command_write_blocks at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:943
+0x4201ed25: sdspi_host_start_command at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:489
+0x4201f06b: sdspi_host_do_transaction at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_transaction.c:153
+0x42090523: sdmmc_send_cmd at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:25
+0x4201c296: sdmmc_write_sectors_dma at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:472
+0x4201c45b: sdmmc_write_sectors at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:416
+0x420124dc: ff_sdmmc_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio_sdmmc.c:66
+0x4200fa12: ff_disk_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio.c:100
+0x420121a2: f_mkfs at /home/pepe/esp/esp-idf/components/fatfs/src/ff.c:6365
+0x4200f8a7: esp_vfs_fat_sdcard_format_cfg at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:515
+0x4200f90d: esp_vfs_fat_sdcard_format at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:533
+0x4200cd2c: format_sd_card at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:696
+0x4200d051: teclado_task at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:222
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0m

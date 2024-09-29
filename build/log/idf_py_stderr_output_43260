@@ -1,0 +1,442 @@
+[0;33m--- esp-idf-monitor 1.4.0 on /dev/ttyACM0 115200 ---[0m
+[0;33m--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x40384b31: spi_ll_set_mosi_bitlen at /home/pepe/esp/esp-idf/components/hal/esp32s3/include/hal/spi_ll.h:908
+ (inlined by) spi_hal_setup_trans at /home/pepe/esp/esp-idf/components/hal/spi_hal_iram.c:84
+0x4037a37c: spi_new_trans at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:773
+0x4037a7cb: spi_device_polling_start at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1376
+0x4037a896: spi_device_polling_transmit at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1431
+0x4201e5e9: poll_busy at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:587
+0x4201e93a: start_command_write_blocks at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:943
+0x4201eef1: sdspi_host_start_command at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:489
+0x4201f237: sdspi_host_do_transaction at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_transaction.c:153
+0x420906ef: sdmmc_send_cmd at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:25
+0x4201c462: sdmmc_write_sectors_dma at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:472
+0x4201c627: sdmmc_write_sectors at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:416
+0x4201251c: ff_sdmmc_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio_sdmmc.c:66
+0x4200fa52: ff_disk_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio.c:100
+0x420121e2: f_mkfs at /home/pepe/esp/esp-idf/components/fatfs/src/ff.c:6365
+0x4200f8e7: esp_vfs_fat_sdcard_format_cfg at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:515
+0x4200f94d: esp_vfs_fat_sdcard_format at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:533
+0x4200cd59: format_sd_card at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:711
+0x4200d091: teclado_task at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:223
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037a841: spi_device_polling_end at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1390
+0x4037a8a1: spi_device_polling_transmit at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1436
+0x4201e5e9: poll_busy at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:587
+0x4201e9b3: start_command_write_blocks at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:966
+0x4201eef1: sdspi_host_start_command at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:489
+0x4201f237: sdspi_host_do_transaction at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_transaction.c:153
+0x420906ef: sdmmc_send_cmd at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:25
+0x4201c462: sdmmc_write_sectors_dma at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:472
+0x4201c627: sdmmc_write_sectors at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:416
+0x4201251c: ff_sdmmc_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio_sdmmc.c:66
+0x4200fa52: ff_disk_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio.c:100
+0x420121e2: f_mkfs at /home/pepe/esp/esp-idf/components/fatfs/src/ff.c:6365
+0x4200f8e7: esp_vfs_fat_sdcard_format_cfg at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:515
+0x4200f94d: esp_vfs_fat_sdcard_format at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:533
+0x4200cd59: format_sd_card at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:711
+0x4200d091: teclado_task at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:223
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x40384d33: spi_ll_dma_tx_enable at /home/pepe/esp/esp-idf/components/hal/esp32s3/include/hal/spi_ll.h:412
+ (inlined by) spi_hal_hw_prepare_tx at /home/pepe/esp/esp-idf/components/hal/spi_hal_iram.c:134
+0x4037a2dc: s_spi_dma_prepare_data at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:696
+0x4037a305: s_spi_prepare_data at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:708
+0x4037a383: spi_new_trans at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:774
+0x4037a7cb: spi_device_polling_start at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1376
+0x4037a896: spi_device_polling_transmit at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1431
+0x4201e679: start_command_default at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:539
+0x4201ef15: sdspi_host_start_command at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:494
+0x4201f237: sdspi_host_do_transaction at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_transaction.c:153
+0x420906ef: sdmmc_send_cmd at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:25
+0x4201c3e9: sdmmc_send_cmd_send_status at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:383
+0x4201c555: sdmmc_write_sectors_dma at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:508
+0x4201c627: sdmmc_write_sectors at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:416
+0x4201251c: ff_sdmmc_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio_sdmmc.c:66
+0x4200fa52: ff_disk_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio.c:100
+0x420121e2: f_mkfs at /home/pepe/esp/esp-idf/components/fatfs/src/ff.c:6365
+0x4200f8e7: esp_vfs_fat_sdcard_format_cfg at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:515
+0x4200f94d: esp_vfs_fat_sdcard_format at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:533
+0x4200cd59: format_sd_card at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:711
+0x4200d091: teclado_task at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:223
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x4037c1c7: xt_utils_wait_for_intr at /home/pepe/esp/esp-idf/components/xtensa/include/xt_utils.h:82
+ (inlined by) esp_cpu_wait_for_intr at /home/pepe/esp/esp-idf/components/esp_hw_support/cpu.c:55
+0x42003dde: esp_vApplicationIdleHook at /home/pepe/esp/esp-idf/components/esp_system/freertos_hooks.c:58
+0x40380831: prvIdleTask at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/tasks.c:4344 (discriminator 1)
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40378f46: esp_crosscore_isr at /home/pepe/esp/esp-idf/components/esp_system/crosscore_int.c:73
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x400559dd: _xtos_set_intlevel in ROM
+0x4037f795: vPortClearInterruptMaskFromISR at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portmacro.h:560
+ (inlined by) xPortInIsrContext at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:446
+0x4037c2d4: xPortEnterCriticalTimeoutSafe at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portmacro.h:578
+ (inlined by) vPortEnterCriticalSafe at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/include/freertos/portmacro.h:588
+ (inlined by) gdma_start at /home/pepe/esp/esp-idf/components/esp_hw_support/dma/gdma.c:539
+0x4037a2bb: s_spi_dma_prepare_data at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:683
+0x4037a305: s_spi_prepare_data at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:708
+0x4037a383: spi_new_trans at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:774
+0x4037a7cb: spi_device_polling_start at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1376
+0x4037a896: spi_device_polling_transmit at /home/pepe/esp/esp-idf/components/esp_driver_spi/src/gpspi/spi_master.c:1431
+0x4201e5e9: poll_busy at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:587
+0x4201e93a: start_command_write_blocks at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:943
+0x4201eef1: sdspi_host_start_command at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_host.c:489
+0x4201f237: sdspi_host_do_transaction at /home/pepe/esp/esp-idf/components/esp_driver_sdspi/src/sdspi_transaction.c:153
+0x420906ef: sdmmc_send_cmd at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:25
+0x4201c462: sdmmc_write_sectors_dma at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:472
+0x4201c627: sdmmc_write_sectors at /home/pepe/esp/esp-idf/components/sdmmc/sdmmc_cmd.c:416
+0x4201251c: ff_sdmmc_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio_sdmmc.c:66
+0x4200fa52: ff_disk_write at /home/pepe/esp/esp-idf/components/fatfs/diskio/diskio.c:100
+0x420121e2: f_mkfs at /home/pepe/esp/esp-idf/components/fatfs/src/ff.c:6365
+0x4200f8e7: esp_vfs_fat_sdcard_format_cfg at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:515
+0x4200f94d: esp_vfs_fat_sdcard_format at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:533
+0x4200cd59: format_sd_card at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:711
+0x4200d091: teclado_task at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:223
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0m

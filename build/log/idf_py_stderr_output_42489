@@ -1,0 +1,29 @@
+[0;33m--- esp-idf-monitor 1.4.0 on /dev/ttyACM0 115200 ---[0m
+[0;33m--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---[0m
+[0;33m0x4201635f: task_wdt_timeout_handling at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:434
+0x420167c8: task_wdt_isr at /home/pepe/esp/esp-idf/components/esp_system/task_wdt/task_wdt.c:507
+0x40377805: _xt_lowint1 at /home/pepe/esp/esp-idf/components/xtensa/xtensa_vectors.S:1240
+0x42007aae: uart_ll_get_txfifo_len at /home/pepe/esp/esp-idf/components/hal/esp32s3/include/hal/uart_ll.h:390
+ (inlined by) uart_tx_char at /home/pepe/esp/esp-idf/components/esp_driver_uart/src/uart_vfs.c:170
+0x420089bb: uart_write at /home/pepe/esp/esp-idf/components/esp_driver_uart/src/uart_vfs.c:223
+0x4200bc1d: esp_vfs_write at /home/pepe/esp/esp-idf/components/vfs/vfs.c:502 (discriminator 4)
+0x420805ee: write at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/syscalls/syswrite.c:11 (discriminator 1)
+0x4200b589: console_write at /home/pepe/esp/esp-idf/components/esp_vfs_console/vfs_console.c:67
+0x4200bc1d: esp_vfs_write at /home/pepe/esp/esp-idf/components/vfs/vfs.c:502 (discriminator 4)
+0x4207ef7a: __swrite at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/stdio/stdio.c:94
+0x4207e481: __sflush_r at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/stdio/fflush.c:224
+0x4207e4d2: _fflush_r at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/stdio/fflush.c:278
+0x4207eac5: __sfvwrite_r at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/stdio/fvwrite.c:251
+0x42089497: __sprint_r at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/stdio/vfiprintf.c:429
+ (inlined by) __sprint_r at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/stdio/vfprintf.c:399
+0x42088e75: _vfprintf_r at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/stdio/vfprintf.c:1774 (discriminator 1)
+0x4207eff1: vprintf at /builds/idf/crosstool-NG/.build/xtensa-esp-elf/src/newlib/newlib/libc/stdio/vprintf.c:34
+0x42098931: esp_log_writev at /home/pepe/esp/esp-idf/components/log/log.c:210
+0x403867fd: esp_log_write at /home/pepe/esp/esp-idf/components/log/log.c:220
+0x4200f6f1: esp_vfs_fat_sdspi_mount at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:383 (discriminator 1)
+0x4200ca67: mount_sdcard at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:591
+0x4200caf7: app_main at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:114
+0x42097957: main_task at /home/pepe/esp/esp-idf/components/freertos/app_startup.c:208
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0m

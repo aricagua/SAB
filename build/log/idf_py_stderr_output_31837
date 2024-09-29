@@ -1,0 +1,14 @@
+[0;33m--- esp-idf-monitor 1.4.0 on /dev/ttyACM0 115200 ---[0m
+[0;33m--- Quit: Ctrl+] | Menu: Ctrl+T | Help: Ctrl+T followed by Ctrl+H ---[0m
+[0;33m0x40375d8a: panic_abort at /home/pepe/esp/esp-idf/components/esp_system/panic.c:463
+0x4037ea05: esp_system_abort at /home/pepe/esp/esp-idf/components/esp_system/port/esp_system_chip.c:92
+0x403879c9: __assert_func at /home/pepe/esp/esp-idf/components/newlib/assert.c:80
+0x4200f8db: esp_vfs_fat_sdcard_format_cfg at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:504 (discriminator 1)
+0x4200f9c5: esp_vfs_fat_sdcard_format at /home/pepe/esp/esp-idf/components/fatfs/vfs/vfs_fat_sdmmc.c:533
+0x4200cd68: format_sd_card at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:703
+0x4200d0bd: teclado_task at /home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/main/main.c:222
+0x4037f5cd: vPortTaskWrapper at /home/pepe/esp/esp-idf/components/freertos/FreeRTOS-Kernel/portable/xtensa/port.c:134
+[0m
+[0;33m0x40375cc4: esp_restart_noos at /home/pepe/esp/esp-idf/components/esp_system/port/soc/esp32s3/system_internal.c:158
+[0m
+[0m

@@ -31,6 +31,7 @@
 #include "nvs.h"
 #include "common.h"
 #include "draw.h"
+
 #define NVS_NAMESPACE "user_data"
 // Constants and definitions
 #define FIREBASE_HOST "https://users-89d5a-default-rtdb.firebaseio.com"
@@ -58,7 +59,7 @@
 
 static const char *TAG = "main";
 
-sdmmc_card_t *card = NULL;
+sdmmc_card_t *card;
 
 
 // WiFi event group
@@ -565,7 +566,7 @@ esp_err_t mount_sdcard(void)
     ESP_LOGI(TAG, "Initializing SD card");
 
     sdmmc_host_t host = SDSPI_HOST_DEFAULT();
-    host.max_freq_khz = 5000;  // Set the SPI frequency to 10 MHz (10,000 kHz)
+    host.max_freq_khz = 1000;  // Set the SPI frequency to 10 MHz (10,000 kHz)
 
     spi_bus_config_t bus_cfg = {
         .mosi_io_num = PIN_NUM_MOSI,
@@ -693,7 +694,7 @@ esp_err_t format_sd_card(const char *mount_point)
 
     // Perform the formatting
     ESP_LOGI(TAG, "Formatting SD card...");
-    ret = esp_vfs_fat_sdcard_format(mount_point, NULL);
+    ret = esp_vfs_fat_sdcard_format(mount_point, card);
     if (ret != ESP_OK) {
         ESP_LOGE(TAG, "Failed to format SD card (%s)", esp_err_to_name(ret));
         return ret;

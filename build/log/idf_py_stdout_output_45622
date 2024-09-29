@@ -1,0 +1,168 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (27) boot: ESP-IDF v5.3-357-g6568f8c553 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Sep 28 2024 16:46:10[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (31) boot: chip revision: v0.1[0m
+[0;32mI (35) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (40) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (44) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (49) boot: Enabling RNG early entropy source...[0m
+[0;32mI (55) boot: Partition Table:[0m
+[0;32mI (58) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (65) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (73) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (80) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (88) boot: End of partition table[0m
+[0;32mI (92) esp_image: segment 0: paddr=00010020 vaddr=3c0a0020 size=27998h (162200) map[0m
+[0;32mI (130) esp_image: segment 1: paddr=000379c0 vaddr=3fc9c600 size=04b24h ( 19236) load[0m
+[0;32mI (134) esp_image: segment 2: paddr=0003c4ec vaddr=40374000 size=03b2ch ( 15148) load[0m
+[0;32mI (139) esp_image: segment 3: paddr=00040020 vaddr=42000020 size=987cch (624588) map[0m
+[0;32mI (256) esp_image: segment 4: paddr=000d87f4 vaddr=40377b2c size=14a2ch ( 84524) load[0m
+[0;32mI (284) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (285) boot: Disabling RNG early entropy source...[0m
+[0;32mI (297) cpu_start: Multicore app[0m
+[0;32mI (306) cpu_start: Pro cpu start user code[0m
+[0;32mI (306) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (306) app_init: Application information:[0m
+[0;32mI (309) app_init: Project name:     tes1[0m
+[0;32mI (313) app_init: App version:      785315a-dirty[0m
+[0;32mI (319) app_init: Compile time:     Sep 28 2024 20:29:11[0m
+[0;32mI (325) app_init: ELF file SHA256:  1224cdf9d...[0m
+[0;32mI (330) app_init: ESP-IDF:          v5.3-357-g6568f8c553[0m
+[0;32mI (336) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (341) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (346) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (351) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (358) heap_init: At 3FCA5008 len 00044708 (273 KiB): RAM[0m
+[0;32mI (364) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (370) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (376) heap_init: At 600FE100 len 00001EE8 (7 KiB): RTCRAM[0m
+[0;32mI (383) spi_flash: detected chip: gd[0m
+[0;32mI (387) spi_flash: flash io: dio[0m
+[0;33mW (390) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (404) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (411) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (418) main_task: Started on CPU0[0m
+[0;32mI (438) main_task: Calling app_main()[0m
+[0;32mI (458) main: Initializing SD card[0m
+[0;32mI (458) main: Mounting filesystem[0m
+[0;32mI (458) gpio: GPIO[38]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (668) sdspi_transaction: cmd=5, R1 response: command not supported[0m
+[0;32mI (1048) main: Filesystem mounted[0m
+[0;32mI (1048) main: ESP_WIFI_MODE_STA[0m
+[0;32mI (1048) pp: pp rom version: e7ae62f[0m
+[0;32mI (1048) net80211: net80211 rom version: e7ae62f[0m
+I (1058) wifi:wifi driver task: 3fcb6694, prio:23, stack:6656, core=0
+I (1068) wifi:wifi firmware version: ccaebfa
+I (1068) wifi:wifi certification version: v7.0
+I (1068) wifi:config NVS flash: enabled
+I (1068) wifi:config nano formating: disabled
+I (1078) wifi:Init data frame dynamic rx buffer num: 32
+I (1078) wifi:Init static rx mgmt buffer num: 5
+I (1088) wifi:Init management short buffer num: 32
+I (1088) wifi:Init dynamic tx buffer num: 32
+I (1088) wifi:Init static tx FG buffer num: 2
+I (1098) wifi:Init static rx buffer size: 1600
+I (1098) wifi:Init static rx buffer num: 10
+I (1108) wifi:Init dynamic rx buffer num: 32
+[0;32mI (1108) wifi_init: rx ba win: 6[0m
+[0;32mI (1108) wifi_init: accept mbox: 6[0m
+[0;32mI (1118) wifi_init: tcpip mbox: 32[0m
+[0;32mI (1118) wifi_init: udp mbox: 6[0m
+[0;32mI (1128) wifi_init: tcp mbox: 6[0m
+[0;32mI (1128) wifi_init: tcp tx win: 5760[0m
+[0;32mI (1128) wifi_init: tcp rx win: 5760[0m
+[0;32mI (1138) wifi_init: tcp mss: 1440[0m
+[0;32mI (1138) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (1148) wifi_init: WiFi RX IRAM OP enabled[0m
+W (1148) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+[0;32mI (1158) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+I (1208) wifi:mode : sta (68:b6:b3:21:1d:44)
+I (1208) wifi:enable tsf
+[0;32mI (1208) main: wifi_init_sta finished.[0m
+I (1218) wifi:new:<11,0>, old:<1,0>, ap:<255,255>, sta:<11,0>, prof:1, snd_ch_cfg:0x0
+I (1218) wifi:state: init -> auth (0xb0)
+I (1228) wifi:state: auth -> assoc (0x0)
+I (1238) wifi:state: assoc -> run (0x10)
+I (1538) wifi:connected with El Guerrero, aid = 3, channel 11, BW20, bssid = bc:d1:77:9f:ce:5c
+I (1538) wifi:security: WPA2-PSK, phy: bgn, rssi: -76
+I (1548) wifi:pm start, type: 1
+
+I (1548) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (1558) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (1568) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+I (1568) wifi:<ba-add>idx:0 (ifx:0, bc:d1:77:9f:ce:5c), tid:0, ssn:2, winSize:64
+[0;32mI (2608) main: AS608 initialized successfully[0m
+[0;32mI (2608) gpio: GPIO[20]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2608) gpio: GPIO[21]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2618) gpio: GPIO[48]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2628) gpio: GPIO[45]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2638) gpio: GPIO[47]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2648) main_task: Returned from app_main()[0m
+[0;32mI (3068) esp_netif_handlers: sta ip: 192.168.1.108, mask: 255.255.255.0, gw: 192.168.1.1[0m
+[0;32mI (3068) main: Got IP:192.168.1.108[0m
+[0;32mI (12488) KEYPAD: Tecla presionada: C[0m
+[0;32mI (12488) DTMF: Playing DTMF tone for key: C[0m
+[0;32mI (14718) KEYPAD: Tecla presionada: 3[0m
+[0;32mI (14718) DTMF: Playing DTMF tone for key: 3[0m
+[0;32mI (16948) KEYPAD: Tecla presionada: 1[0m
+[0;32mI (16948) DTMF: Playing DTMF tone for key: 1[0m
+[0;32mI (18298) KEYPAD: Tecla presionada: 4[0m
+[0;32mI (18298) DTMF: Playing DTMF tone for key: 4[0m
+[0;32mI (18568) KEYPAD: Tecla presionada: 4[0m
+[0;32mI (18568) DTMF: Playing DTMF tone for key: 4[0m
+[0;32mI (20558) KEYPAD: Tecla presionada: B[0m
+[0;32mI (20558) DTMF: Playing DTMF tone for key: B[0m
+[0;32mI (22888) KEYPAD: Tecla presionada: C[0m
+[0;32mI (22888) DTMF: Playing DTMF tone for key: C[0m
+[0;32mI (24568) KEYPAD: Tecla presionada: 3[0m
+[0;32mI (24568) DTMF: Playing DTMF tone for key: 3[0m
+[0;32mI (25658) KEYPAD: Tecla presionada: 1[0m
+[0;32mI (25658) DTMF: Playing DTMF tone for key: 1[0m
+[0;32mI (27508) KEYPAD: Tecla presionada: 4[0m
+[0;32mI (27508) DTMF: Playing DTMF tone for key: 4[0m
+[0;32mI (28628) KEYPAD: Tecla presionada: 1[0m
+[0;32mI (28628) DTMF: Playing DTMF tone for key: 1[0m
+[0;32mI (29588) KEYPAD: Tecla presionada: A[0m
+[0;32mI (29588) DTMF: Playing DTMF tone for key: A[0m
+[0;32mI (33708) KEYPAD: Tecla presionada: 5[0m
+[0;32mI (33708) DTMF: Playing DTMF tone for key: 5[0m
+[0;32mI (35318) KEYPAD: Tecla presionada: A[0m
+[0;32mI (35318) DTMF: Playing DTMF tone for key: A[0m
+[0;32mI (36958) KEYPAD: Tecla presionada: A[0m
+[0;32mI (36958) DTMF: Playing DTMF tone for key: A[0m
+[0;32mI (37158) FINGERPRINT: Attempting to delete all fingerprints[0m
+[0;32mI (38458) FINGERPRINT: All fingerprints deleted successfully[0m
+[0;32mI (38458) main: Formatting SD card...[0m
+[0;32mI (38458) vfs_fat_sdmmc: Formatting card, allocation unit size=16384[0m
+[0;31mE (73078) sdmmc_cmd: sdmmc_write_sectors_dma: sdmmc_send_cmd returned 0x107[0m
+[0;31mE (73088) diskio_sdmmc: sdmmc_write_blocks failed (0x107)[0m
+[0;31mE (74168) sdmmc_cmd: sdmmc_read_sectors_dma: sdmmc_send_cmd returned 0x107[0m
+[0;31mE (74168) diskio_sdmmc: sdmmc_read_blocks failed (0x107)[0m
+[0;33mW (74168) vfs_fat_sdmmc: failed to mount card (1)[0m
+[0;32mI (74178) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;31mE (74188) vfs_fat_sdmmc: failed to format, resources recycled, please mount again[0m
+[0;31mE (74188) main: Failed to format SD card (ESP_FAIL)[0m
+[0;32mI (74208) KEYPAD: Tecla presionada: B[0m
+[0;32mI (74208) DTMF: Playing DTMF tone for key: B[0m
+[0;32mI (74418) KEYPAD: Tecla presionada: B[0m
+[0;32mI (74418) DTMF: Playing DTMF tone for key: B[0m
+[0;32mI (74628) KEYPAD: Tecla presionada: B[0m
+[0;32mI (74628) DTMF: Playing DTMF tone for key: B[0m
+[0;32mI (74838) KEYPAD: Tecla presionada: B[0m
+[0;32mI (74838) DTMF: Playing DTMF tone for key: B[0m
+[0;32mI (89108) KEYPAD: Tecla presionada: A[0m
+[0;32mI (89108) DTMF: Playing DTMF tone for key: A[0m
+[0;32mI (89378) KEYPAD: Tecla presionada: A[0m
+[0;32mI (89378) DTMF: Playing DTMF tone for key: A[0m
+[0;32mI (93228) KEYPAD: Tecla presionada: B[0m
+[0;32mI (93228) DTMF: Playing DTMF tone for key: B[0m
