@@ -51,6 +51,9 @@
 #define MOUNT_POINT "/sdcard"
 #define MAX_USER_DATA_SIZE 256
 
+#define MAX_RETRY 3
+#define LOG_FILE_PATH MOUNT_POINT"/log.txt"
+
 // Pin assignments for SD card
 #define PIN_NUM_MISO  37
 #define PIN_NUM_MOSI  35
@@ -97,6 +100,8 @@ esp_err_t save_user_data(const char *mount_point, const DatosUsuario *usuario);
 esp_err_t load_user_data_txt(DatosUsuario *usuario, const char *cedula);
 esp_err_t delete_all_fingerprints(void);
 esp_err_t format_sd_card(const char *mount_point);
+esp_err_t register_attendance(uint16_t page_number);
+void estado_asistencia_task(void *pvParameters);
 
 const char* data = "Callback function called";
 /*************************sd************************************/
@@ -135,6 +140,10 @@ void app_main() {
     // Create tasks
     xTaskCreate(teclado_task, "TECLADO", 4096, NULL, 5, NULL);
     xTaskCreate(pantalla_task, "PANTALLA", 4096, NULL, 5, NULL);
+}
+
+void iniciar_estado_asistencia() {
+    xTaskCreate(estado_asistencia_task, "ASISTENCIA_TASK", 4096, NULL, 5, NULL);
 }
 
 void teclado_task(void *pvParameters) {
@@ -344,9 +353,11 @@ void teclado_task(void *pvParameters) {
                     }
                     break;
                 case ESTADO_ASISTENCIA:
-                    if(keypressed == 'B') {
-                        estado_actual = ESTADO_CONFIGURACION;
-                        opcion_seleccionada = 1;
+    		    if(keypressed == 'B') {
+                    estado_actual = ESTADO_CONFIGURACION;
+                    opcion_seleccionada = 1;
+                    } else if (keypressed == 'A') {
+                    iniciar_estado_asistencia();
                     }
                     break;
                 case ESTADO_RESUMEN_REGISTRO:
@@ -410,7 +421,6 @@ void pantalla_task(void *pvParameters) {
                     dibujar_resumen_registro();
                     break;
                 case ESTADO_ASISTENCIA:
-                    dibujar_asistencia();
                     break;
                 case ESTADO_ERROR_REGISTRO:
                     dibujar_error_registro();
@@ -602,8 +612,6 @@ esp_err_t mount_sdcard(void)
 esp_err_t save_user_data(const char *mount_point, const DatosUsuario *usuario)
 {
 
-
-    
     char file_path[64];
     
     // Format the file path using huella_pagina as an integer
@@ -611,7 +619,7 @@ esp_err_t save_user_data(const char *mount_point, const DatosUsuario *usuario)
     
     
     ESP_LOGI(TAG, "Opening file %s", file_path);
-    FILE *f = fopen(file_path, "wb");
+    FILE *f = fopen(file_path, "w");
     if (f == NULL) {
         ESP_LOGE(TAG, "Failed to open file for writing");
         return ESP_FAIL;
@@ -724,4 +732,93 @@ esp_err_t format_sd_card(const char *mount_point)
     return ESP_OK;
 }
 
+esp_err_t register_attendance(uint16_t page_number) {
+    char user_file[64];
+    snprintf(user_file, sizeof(user_file), MOUNT_POINT"/user_%d.txt", page_number);
+    
+    ESP_LOGI(TAG, "Opening user file %s", user_file);
+    FILE *f = fopen(user_file, "r");  
+    if (f == NULL) {
+        ESP_LOGE(TAG, "Failed to open user file for reading");
+        return ESP_FAIL;
+    }
+    
+    DatosUsuario usuario;
+    size_t read = fread(&usuario, sizeof(DatosUsuario), 1, f);
+    fclose(f);
+    
+    if (read != 1) {
+        ESP_LOGE(TAG, "Failed to read user data");
+        return ESP_FAIL;
+    }
 
+    time_t now;
+    time(&now);
+    struct tm timeinfo;
+    localtime_r(&now, &timeinfo);
+
+    ESP_LOGI(TAG, "Opening log file %s", LOG_FILE_PATH);
+    FILE *log_file = fopen(LOG_FILE_PATH, "a");  // Open in append mode
+    if (log_file == NULL) {
+       ESP_LOGE(TAG, "Failed to open log file for writing: %s", strerror(errno));
+       return ESP_FAIL;
+    }
+    
+    fprintf(log_file, "%04d-%02d-%02d %02d:%02d:%02d, %s, %s\n",
+            timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday,
+            timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec,
+            usuario.cedula, usuario.tipo);
+    
+    fclose(log_file);
+    
+    ESP_LOGI(TAG, "Attendance registered for user: %s", usuario.cedula);
+    return ESP_OK;
+}
+void estado_asistencia_task(void *pvParameters) {
+    uint8_t res;
+    uint16_t score;
+    uint16_t found_page;  // Correctly declare found_page
+    as608_status_t status;
+    int retry_count = 0;
+
+    while (estado_actual == ESTADO_ASISTENCIA) {
+        ESP_LOGI(TAG, "Place your finger on the sensor");
+        dibujar_esperando_huella();  // Function to update the display
+
+        res = as608_basic_verify(&found_page, &score, &status);
+
+        if (res == 0) {
+            if (status == AS608_STATUS_OK) {
+                ESP_LOGI(TAG, "Fingerprint matched. Page: %d, Score: %d", found_page, score);
+                if (register_attendance(found_page) == ESP_OK) {
+                    dibujar_asistencia_registrada(found_page);  // Function to update the display
+                    vTaskDelay(pdMS_TO_TICKS(2000));  // Display success message for 2 seconds
+                } else {
+                    dibujar_error_registro_asistencia();  // Function to update the display
+                    vTaskDelay(pdMS_TO_TICKS(2000));  // Display error message for 2 seconds
+                }
+                retry_count = 0;
+            } else {
+                ESP_LOGI(TAG, "Fingerprint not recognized. Status: %d", status);
+                dibujar_huella_no_reconocida();  // Function to update the display
+                vTaskDelay(pdMS_TO_TICKS(2000));  // Display error message for 2 seconds
+                retry_count++;
+            }
+        } else {
+            ESP_LOGE(TAG, "Error in fingerprint verification. Result: %d", res);
+            dibujar_error_verificacion();  // Function to display verification error
+            vTaskDelay(pdMS_TO_TICKS(2000));  // Display error message for 2 seconds
+            retry_count++;
+        }
+
+        if (retry_count >= MAX_RETRY) {
+            ESP_LOGI(TAG, "Max retries reached. Returning to main menu.");
+            estado_actual = ESTADO_PRINCIPAL;
+            break;
+        }
+
+        vTaskDelay(pdMS_TO_TICKS(100));  // Small delay to prevent tight looping
+    }
+
+    vTaskDelete(NULL);
+}

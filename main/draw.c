@@ -115,13 +115,6 @@ void dibujar_seleccionar_tipo() {
     TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
 }
 
-void dibujar_asistencia() {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("ASISTENCIA"), 0, "ASISTENCIA", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("Funcionalidad"), SCREEN_HEIGHT / 2 - CHAR_HEIGHT, "Funcionalidad", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("no implementada"), SCREEN_HEIGHT / 2 + CHAR_HEIGHT, "no implementada", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "B: Volver", ST7735_WHITE, ST7735_BLACK, 1);
-}
 
 void dibujar_resumen_registro() {
     TFTfillScreen(ST7735_BLACK);
@@ -240,6 +233,49 @@ void dibujar_menu_configuracion(void)
     TFTdrawText(CHAR_WIDTH * 8, SCREEN_HEIGHT - CHAR_HEIGHT, opcion_str, ST7735_GREEN, ST7735_BLACK, 1);
 }
 
+void dibujar_esperando_huella(void)
+{
+    TFTfillScreen(ST7735_BLACK);
+    TFTdrawText(10, 40, "ESPERANDO HUELLA", ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(10, 60, "Coloque su dedo", ST7735_CYAN, ST7735_BLACK, 1);
+    TFTdrawText(10, 80, "en el sensor", ST7735_CYAN, ST7735_BLACK, 1);
+    TFTdrawText(10, 120, "B: Cancelar", ST7735_WHITE, ST7735_BLACK, 1);
+}
+
+void dibujar_asistencia_registrada(uint16_t page_number)
+{
+    TFTfillScreen(ST7735_BLACK);
+    TFTdrawText(10, 40, "ASISTENCIA", ST7735_GREEN, ST7735_BLACK, 1);
+    TFTdrawText(10, 60, "REGISTRADA", ST7735_GREEN, ST7735_BLACK, 1);
+    
+    char user_info[30];
+    snprintf(user_info, sizeof(user_info), "Usuario ID: %d", page_number);
+    TFTdrawText(10, 90, user_info, ST7735_WHITE, ST7735_BLACK, 1);
+}
+
+void dibujar_error_registro_asistencia(void)
+{
+    TFTfillScreen(ST7735_BLACK);
+    TFTdrawText(10, 40, "ERROR AL REGISTRAR", ST7735_RED, ST7735_BLACK, 1);
+    TFTdrawText(10, 60, "LA ASISTENCIA", ST7735_RED, ST7735_BLACK, 1);
+    TFTdrawText(10, 100, "Intente nuevamente", ST7735_WHITE, ST7735_BLACK, 1);
+}
+
+void dibujar_huella_no_reconocida(void)
+{
+    TFTfillScreen(ST7735_BLACK);
+    TFTdrawText(10, 40, "HUELLA NO", ST7735_YELLOW, ST7735_BLACK, 1);
+    TFTdrawText(10, 60, "RECONOCIDA", ST7735_YELLOW, ST7735_BLACK, 1);
+    TFTdrawText(10, 100, "Intente nuevamente", ST7735_WHITE, ST7735_BLACK, 1);
+}
+
+void dibujar_error_verificacion(void)
+{
+    TFTfillScreen(ST7735_BLACK);
+    TFTdrawText(10, 40, "ERROR DE", ST7735_RED, ST7735_BLACK, 1);
+    TFTdrawText(10, 60, "VERIFICACION", ST7735_RED, ST7735_BLACK, 1);
+    TFTdrawText(10, 100, "Intente nuevamente", ST7735_WHITE, ST7735_BLACK, 1);
+}
 
 
 int text_length(const char* text) {

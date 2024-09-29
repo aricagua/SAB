@@ -15,6 +15,11 @@ extern uint16_t page_to_delete;
 extern bool as608_initialized;
 extern int input_index; 
 
+void dibujar_esperando_huella(void);
+void dibujar_asistencia_registrada(uint16_t page_number);
+void dibujar_error_registro_asistencia(void);
+void dibujar_huella_no_reconocida(void);
+void dibujar_error_verificacion(void);
 void dibujar_menu_principal();
 void dibujar_menu_configuracion();
 void dibujar_ingresar_pin_admin();
