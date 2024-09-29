@@ -1,0 +1,116 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (27) boot: ESP-IDF v5.3-357-g6568f8c553 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Sep 28 2024 16:46:10[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (31) boot: chip revision: v0.1[0m
+[0;32mI (35) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (40) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (44) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (49) boot: Enabling RNG early entropy source...[0m
+[0;32mI (55) boot: Partition Table:[0m
+[0;32mI (58) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (65) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (73) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (80) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (88) boot: End of partition table[0m
+[0;32mI (92) esp_image: segment 0: paddr=00010020 vaddr=3c0a0020 size=286a8h (165544) map[0m
+[0;32mI (130) esp_image: segment 1: paddr=000386d0 vaddr=3fc9c600 size=04b24h ( 19236) load[0m
+[0;32mI (134) esp_image: segment 2: paddr=0003d1fc vaddr=40374000 size=02e1ch ( 11804) load[0m
+[0;32mI (139) esp_image: segment 3: paddr=00040020 vaddr=42000020 size=99228h (627240) map[0m
+[0;32mI (257) esp_image: segment 4: paddr=000d9250 vaddr=40376e1c size=1573ch ( 87868) load[0m
+[0;32mI (286) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (286) boot: Disabling RNG early entropy source...[0m
+[0;32mI (298) cpu_start: Multicore app[0m
+[0;32mI (307) cpu_start: Pro cpu start user code[0m
+[0;32mI (308) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (308) app_init: Application information:[0m
+[0;32mI (310) app_init: Project name:     tes1[0m
+[0;32mI (315) app_init: App version:      6308e1c-dirty[0m
+[0;32mI (320) app_init: Compile time:     Sep 28 2024 22:47:31[0m
+[0;32mI (326) app_init: ELF file SHA256:  5a4ecf20e...[0m
+[0;32mI (332) app_init: ESP-IDF:          v5.3-357-g6568f8c553[0m
+[0;32mI (338) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (343) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (347) efuse_init: Chip rev:         v0.1[0m
+[0;32mI (352) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (360) heap_init: At 3FCA5008 len 00044708 (273 KiB): RAM[0m
+[0;32mI (366) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (372) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (378) heap_init: At 600FE100 len 00001EE8 (7 KiB): RTCRAM[0m
+[0;32mI (385) spi_flash: detected chip: gd[0m
+[0;32mI (388) spi_flash: flash io: dio[0m
+[0;33mW (392) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (406) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (412) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (420) main_task: Started on CPU0[0m
+[0;32mI (440) main_task: Calling app_main()[0m
+[0;32mI (460) main: Initializing SD card[0m
+[0;32mI (460) main: Mounting filesystem[0m
+[0;32mI (460) gpio: GPIO[38]| InputEn: 0| OutputEn: 1| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;32mI (510) sdspi_transaction: cmd=5, R1 response: command not supported[0m
+[0;31mE (510) sdmmc_sd: sdmmc_init_spi_crc: sdmmc_send_cmd_crc_on_off returned 0x106[0m
+[0;31mE (510) vfs_fat_sdmmc: sdmmc_card_init failed (0x106).[0m
+[0;32mI (520) gpio: GPIO[38]| InputEn: 1| OutputEn: 0| OpenDrain: 0| Pullup: 0| Pulldown: 0| Intr:0 [0m
+[0;31mE (530) main: Failed to mount filesystem[0m
+[0;31mE (530) main: Failed to mount SD card[0m
+[0;32mI (530) main: ESP_WIFI_MODE_STA[0m
+[0;32mI (540) pp: pp rom version: e7ae62f[0m
+[0;32mI (540) net80211: net80211 rom version: e7ae62f[0m
+I (560) wifi:wifi driver task: 3fcaf6a8, prio:23, stack:6656, core=0
+I (570) wifi:wifi firmware version: ccaebfa
+I (570) wifi:wifi certification version: v7.0
+I (570) wifi:config NVS flash: enabled
+I (570) wifi:config nano formating: disabled
+I (570) wifi:Init data frame dynamic rx buffer num: 32
+I (580) wifi:Init static rx mgmt buffer num: 5
+I (580) wifi:Init management short buffer num: 32
+I (580) wifi:Init dynamic tx buffer num: 32
+I (590) wifi:Init static tx FG buffer num: 2
+I (590) wifi:Init static rx buffer size: 1600
+I (600) wifi:Init static rx buffer num: 10
+I (600) wifi:Init dynamic rx buffer num: 32
+[0;32mI (600) wifi_init: rx ba win: 6[0m
+[0;32mI (610) wifi_init: accept mbox: 6[0m
+[0;32mI (610) wifi_init: tcpip mbox: 32[0m
+[0;32mI (620) wifi_init: udp mbox: 6[0m
+[0;32mI (620) wifi_init: tcp mbox: 6[0m
+[0;32mI (620) wifi_init: tcp tx win: 5760[0m
+[0;32mI (630) wifi_init: tcp rx win: 5760[0m
+[0;32mI (630) wifi_init: tcp mss: 1440[0m
+[0;32mI (630) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (640) wifi_init: WiFi RX IRAM OP enabled[0m
+W (640) wifi:Password length matches WPA2 standards, authmode threshold changes from OPEN to WPA2
+[0;32mI (650) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+I (700) wifi:mode : sta (68:b6:b3:21:1d:44)
+I (700) wifi:enable tsf
+[0;32mI (700) main: wifi_init_sta finished.[0m
+I (710) wifi:new:<11,0>, old:<1,0>, ap:<255,255>, sta:<11,0>, prof:1, snd_ch_cfg:0x0
+I (710) wifi:state: init -> auth (0xb0)
+I (720) wifi:state: auth -> assoc (0x0)
+I (720) wifi:state: assoc -> run (0x10)
+I (1090) wifi:<ba-add>idx:0 (ifx:0, bc:d1:77:9f:ce:5c), tid:0, ssn:2, winSize:64
+I (1090) wifi:connected with El Guerrero, aid = 2, channel 11, BW20, bssid = bc:d1:77:9f:ce:5c
+I (1090) wifi:security: WPA2-PSK, phy: bgn, rssi: -67
+I (1100) wifi:pm start, type: 1
+
+I (1100) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (1110) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (1110) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+[0;32mI (2120) main: AS608 initialized successfully[0m
+[0;32mI (2120) gpio: GPIO[20]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2120) gpio: GPIO[21]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2130) gpio: GPIO[48]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2140) gpio: GPIO[45]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2150) gpio: GPIO[47]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (2160) main_task: Returned from app_main()[0m
+[0;32mI (2620) esp_netif_handlers: sta ip: 192.168.1.108, mask: 255.255.255.0, gw: 192.168.1.1[0m
+[0;32mI (2620) main: Got IP:192.168.1.108[0m

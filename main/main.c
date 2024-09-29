@@ -168,7 +168,7 @@ void teclado_task(void *pvParameters) {
             dtmf_play_tone(keypressed);
             
             switch(estado_actual) {
-                case ESTADO_BIENVENIDA:
+               case ESTADO_BIENVENIDA:
                     estado_actual = ESTADO_PRINCIPAL;
                     break;
                 case ESTADO_PRINCIPAL:
@@ -176,6 +176,9 @@ void teclado_task(void *pvParameters) {
                         estado_actual = ESTADO_INGRESAR_PIN_ADMIN;
                         input_index = 0;
                         memset(admin_pin_input, 0, sizeof(admin_pin_input));
+                    } else if (keypressed == '*'){
+                        estado_actual = ESTADO_ASISTENCIA;
+                        iniciar_estado_asistencia();
                     }
                     break;
                 case ESTADO_INGRESAR_PIN_ADMIN:
@@ -198,7 +201,7 @@ void teclado_task(void *pvParameters) {
                     }
                     break;
                     case ESTADO_CONFIGURACION:
-                        if(keypressed >= '1' && keypressed <= '5') {
+                        if(keypressed >= '1' && keypressed <= '4') {
                             opcion_seleccionada = keypressed - '0';
                         } else if(keypressed == 'A') {
                             switch(opcion_seleccionada) {
@@ -214,9 +217,6 @@ void teclado_task(void *pvParameters) {
                                     // Implement advanced configuration
                                     break;
                                 case 4:
-                                    estado_actual = ESTADO_ASISTENCIA;
-                                    break;
-                                case 5:
                                     estado_actual = ESTADO_RESETEAR_SISTEMA;
                                     break;
                             }
@@ -354,8 +354,7 @@ void teclado_task(void *pvParameters) {
                     break;
                 case ESTADO_ASISTENCIA:
     		    if(keypressed == 'B') {
-                    estado_actual = ESTADO_CONFIGURACION;
-                    opcion_seleccionada = 1;
+                    estado_actual = ESTADO_PRINCIPAL;
                     } else if (keypressed == 'A') {
                     iniciar_estado_asistencia();
                     }
@@ -421,6 +420,7 @@ void pantalla_task(void *pvParameters) {
                     dibujar_resumen_registro();
                     break;
                 case ESTADO_ASISTENCIA:
+                    dibujar_esperando_huella();
                     break;
                 case ESTADO_ERROR_REGISTRO:
                     dibujar_error_registro();
@@ -774,16 +774,16 @@ esp_err_t register_attendance(uint16_t page_number) {
     ESP_LOGI(TAG, "Attendance registered for user: %s", usuario.cedula);
     return ESP_OK;
 }
+
 void estado_asistencia_task(void *pvParameters) {
     uint8_t res;
     uint16_t score;
-    uint16_t found_page;  // Correctly declare found_page
+    uint16_t found_page;
     as608_status_t status;
     int retry_count = 0;
 
     while (estado_actual == ESTADO_ASISTENCIA) {
-        ESP_LOGI(TAG, "Place your finger on the sensor");
-        dibujar_esperando_huella();  // Function to update the display
+        vTaskDelay(pdMS_TO_TICKS(3000));  // Display "waiting for fingerprint" for 3 seconds
 
         res = as608_basic_verify(&found_page, &score, &status);
 
@@ -791,33 +791,34 @@ void estado_asistencia_task(void *pvParameters) {
             if (status == AS608_STATUS_OK) {
                 ESP_LOGI(TAG, "Fingerprint matched. Page: %d, Score: %d", found_page, score);
                 if (register_attendance(found_page) == ESP_OK) {
-                    dibujar_asistencia_registrada(found_page);  // Function to update the display
-                    vTaskDelay(pdMS_TO_TICKS(2000));  // Display success message for 2 seconds
+                    dibujar_asistencia_registrada(found_page);
                 } else {
-                    dibujar_error_registro_asistencia();  // Function to update the display
-                    vTaskDelay(pdMS_TO_TICKS(2000));  // Display error message for 2 seconds
+                    dibujar_error_registro_asistencia();
                 }
                 retry_count = 0;
             } else {
                 ESP_LOGI(TAG, "Fingerprint not recognized. Status: %d", status);
-                dibujar_huella_no_reconocida();  // Function to update the display
-                vTaskDelay(pdMS_TO_TICKS(2000));  // Display error message for 2 seconds
+                dibujar_huella_no_reconocida();
                 retry_count++;
             }
         } else {
             ESP_LOGE(TAG, "Error in fingerprint verification. Result: %d", res);
-            dibujar_error_verificacion();  // Function to display verification error
-            vTaskDelay(pdMS_TO_TICKS(2000));  // Display error message for 2 seconds
+            dibujar_error_verificacion();
             retry_count++;
         }
 
+        vTaskDelay(pdMS_TO_TICKS(3000));  // Display result for 3 seconds
+
         if (retry_count >= MAX_RETRY) {
-            ESP_LOGI(TAG, "Max retries reached. Returning to main menu.");
-            estado_actual = ESTADO_PRINCIPAL;
+            TFTfillScreen(ST7735_BLACK);
+            TFTdrawText(10, 40, "MAXIMO DE INTENTOS", ST7735_RED, ST7735_BLACK, 1);
+            TFTdrawText(10, 60, "ALCANZADO", ST7735_RED, ST7735_BLACK, 1);
+            vTaskDelay(pdMS_TO_TICKS(3000));  // Display message for 3 seconds
+            estado_actual = ESTADO_BIENVENIDA;
             break;
         }
 
-        vTaskDelay(pdMS_TO_TICKS(100));  // Small delay to prevent tight looping
+        vTaskDelay(pdMS_TO_TICKS(1000));  // Wait for 1 second before next attempt
     }
 
     vTaskDelete(NULL);

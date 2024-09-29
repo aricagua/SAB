@@ -11,7 +11,8 @@ void dibujar_menu_principal() {
     TFTdrawText(get_centered_position("BIENVENIDO"), 0, "BIENVENIDO", ST7735_WHITE, ST7735_BLACK, 1);
     char fecha_hora[30];
     snprintf(fecha_hora, sizeof(fecha_hora), "Agosto 10 de 2024 20:00");
-    TFTdrawText(get_centered_position(fecha_hora), SCREEN_HEIGHT/2, fecha_hora, ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(get_centered_position(fecha_hora), SCREEN_HEIGHT/2 - CHAR_HEIGHT, fecha_hora, ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(get_centered_position("*: Asistencia"), SCREEN_HEIGHT/2 + CHAR_HEIGHT, "*: Asistencia", ST7735_WHITE, ST7735_BLACK, 1);
     TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "C: Configuracion", ST7735_WHITE, ST7735_BLACK, 1);
 }
 
@@ -204,7 +205,6 @@ void dibujar_error_reset(void)
     TFTdrawText(10, 100, "A: Continuar", ST7735_WHITE, ST7735_BLACK, 1);
 }
 
-// In the dibujar_menu_configuracion function, update option 5:
 void dibujar_menu_configuracion(void)
 {
     TFTfillScreen(ST7735_BLACK);
@@ -213,10 +213,9 @@ void dibujar_menu_configuracion(void)
         "1. Registrar Usuario",
         "2. Buscar Usuario",
         "3. Config. Avanzada",
-        "4. Asistencia",
-        "5. Resetear Sistema"
+        "4. Resetear Sistema"
     };
-    for(int i = 0; i < 5; i++) {
+    for(int i = 0; i < 4; i++) {
         uint16_t bgColor = (i == opcion_seleccionada - 1) ? ST7735_BLUE : ST7735_BLACK;
         uint16_t textColor = ST7735_WHITE;
         TFTdrawText(0, 20 + i*12, (char*)opciones[i], textColor, bgColor, 1);
