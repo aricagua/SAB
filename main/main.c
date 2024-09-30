@@ -38,8 +38,10 @@
 
 #define NVS_NAMESPACE "user_data"
 #define MAX_USERS 100 
-#define LOGS_PER_PAGE 4
+#define LOGS_PER_PAGE 6
 #define MAX_DISPLAY_LINE 32
+#define SMALL_FONT_SCALE 1
+#define NORMAL_FONT_SCALE 2
 // Constants and definitions
 #define FIREBASE_HOST "https://users-89d5a-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "your-database-secret"
@@ -302,8 +304,12 @@ void teclado_task(void *pvParameters) {
                     break;
                 case ESTADO_VER_REGISTRO:
                     if(keypressed == 'B') {
-                        estado_actual = ESTADO_CONFIGURACION;
-                        opcion_seleccionada = 5;
+                        if (log_start_index >= LOGS_PER_PAGE) {
+                            log_start_index -= LOGS_PER_PAGE;
+                        } else {
+                            estado_actual = ESTADO_CONFIGURACION;
+                            opcion_seleccionada = 5;
+                        }
                     } else if(keypressed == 'A') {
                         nvs_handle_t nvs_handle;
                         esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
@@ -314,10 +320,10 @@ void teclado_task(void *pvParameters) {
                             
                             if (log_start_index + LOGS_PER_PAGE < log_count) {
                                 log_start_index += LOGS_PER_PAGE;
-                                estado_actual = ESTADO_VER_REGISTRO;  // Force redraw
                             }
                         }
                     }
+                    estado_actual = ESTADO_VER_REGISTRO;  // Force redraw
                     break;
 
                 case ESTADO_RESET_EXITOSO:
@@ -826,32 +832,55 @@ esp_err_t erase_all_user_data_nvs() {
     nvs_handle_t nvs_handle;
     esp_err_t err;
 
-    // Open NVS
+    // Open NVS for user data
     err = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &nvs_handle);
     if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error opening NVS handle: %s", esp_err_to_name(err));
+        ESP_LOGE(TAG, "Error opening NVS handle for user data: %s", esp_err_to_name(err));
         return err;
     }
 
-    // Erase all keys in the specific namespace
+    // Erase all user data keys
     err = nvs_erase_all(nvs_handle);
     if (err != ESP_OK) {
         ESP_LOGE(TAG, "Error erasing all keys in user data namespace: %s", esp_err_to_name(err));
     } else {
-        // Commit the changes
         err = nvs_commit(nvs_handle);
         if (err != ESP_OK) {
-            ESP_LOGE(TAG, "Error committing NVS changes: %s", esp_err_to_name(err));
+            ESP_LOGE(TAG, "Error committing NVS changes for user data: %s", esp_err_to_name(err));
         } else {
             ESP_LOGI(TAG, "All user data erased successfully");
         }
     }
 
-    // Close NVS
+    // Close NVS for user data
+    nvs_close(nvs_handle);
+
+    // Open NVS for attendance log (assuming ATTENDANCE_LOG_NAMESPACE exists)
+    err = nvs_open("attendance_log", NVS_READWRITE, &nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error opening NVS handle for attendance log: %s", esp_err_to_name(err));
+        return err;
+    }
+
+    // Erase all attendance log keys
+    err = nvs_erase_all(nvs_handle);
+    if (err != ESP_OK) {
+        ESP_LOGE(TAG, "Error erasing all keys in attendance log namespace: %s", esp_err_to_name(err));
+    } else {
+        err = nvs_commit(nvs_handle);
+        if (err != ESP_OK) {
+            ESP_LOGE(TAG, "Error committing NVS changes for attendance log: %s", esp_err_to_name(err));
+        } else {
+            ESP_LOGI(TAG, "All attendance log erased successfully");
+        }
+    }
+
+    // Close NVS for attendance log
     nvs_close(nvs_handle);
 
     return err;
 }
+
 
 esp_err_t register_attendance_nvs(const DatosUsuario *usuario) {
     struct tm timeinfo;
@@ -952,12 +981,12 @@ esp_err_t load_user_data_nvs(DatosUsuario *usuario, uint16_t huella_pagina) {
 
 void dibujar_ver_registro(uint32_t start_index) {
     TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("REGISTRO DE ASISTENCIA"), 0, "REGISTRO DE ASISTENCIA", ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(get_centered_position("REGISTRO DE ASISTENCIA"), 0, "REGISTRO DE ASISTENCIA", ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
 
     nvs_handle_t nvs_handle;
     esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
     if (err != ESP_OK) {
-        TFTdrawText(0, SCREEN_HEIGHT/2, "Error al abrir NVS", ST7735_RED, ST7735_BLACK, 1);
+        TFTdrawText(0, SCREEN_HEIGHT/2, "Error al abrir NVS", ST7735_RED, ST7735_BLACK, SMALL_FONT_SCALE);
         return;
     }
 
@@ -981,20 +1010,20 @@ void dibujar_ver_registro(uint32_t start_index) {
                    &year, &month, &day, &hour, &min, &sec, cedula, tipo);
             
             char display_line[MAX_DISPLAY_LINE];
-            snprintf(display_line, sizeof(display_line), "%.10s %02d/%02d %02d:%02d", 
-                     cedula, day, month, hour, min);
-            TFTdrawText(0, 20 + i*CHAR_HEIGHT*2, display_line, ST7735_WHITE, ST7735_BLACK, 1);
+            snprintf(display_line, sizeof(display_line), "%02d/%02d/%02d %02d:%02d %.8s", 
+                     day, month, year % 100, hour, min, cedula);
+            TFTdrawText(0, 20 + i*(CHAR_HEIGHT+2)*SMALL_FONT_SCALE, display_line, ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
         }
     }
 
     nvs_close(nvs_handle);
 
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT*2, "B: Regresar", ST7735_WHITE, ST7735_BLACK, 1);
-    if (start_index + LOGS_PER_PAGE < log_count) {
-        TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Siguiente", ST7735_WHITE, ST7735_BLACK, 1);
-    }
+    char nav_text[64];
+    snprintf(nav_text, sizeof(nav_text), "B:Atras A:Sig %lu/%lu", 
+             (unsigned long)(start_index/LOGS_PER_PAGE + 1), 
+             (unsigned long)((log_count + LOGS_PER_PAGE - 1) / LOGS_PER_PAGE));
+    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT*SMALL_FONT_SCALE, nav_text, ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
 }
-
 // Function to initialize and start the SNTP client
 void initialize_sntp(void) {
     ESP_LOGI(TAG_TIME, "Initializing SNTP");
