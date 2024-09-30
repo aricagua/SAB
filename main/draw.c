@@ -4,6 +4,7 @@
 #include <string.h>
 #include <tft.h>
 
+
 int opcion_seleccionada = 1;
 
 void dibujar_menu_principal() {
@@ -213,9 +214,10 @@ void dibujar_menu_configuracion(void)
         "1. Registrar Usuario",
         "2. Buscar Usuario",
         "3. Config. Avanzada",
-        "4. Resetear Sistema"
+        "4. Resetear Sistema",
+        "5. Ver registro"
     };
-    for(int i = 0; i < 4; i++) {
+    for(int i = 0; i < 5; i++) {
         uint16_t bgColor = (i == opcion_seleccionada - 1) ? ST7735_BLUE : ST7735_BLACK;
         uint16_t textColor = ST7735_WHITE;
         TFTdrawText(0, 20 + i*12, (char*)opciones[i], textColor, bgColor, 1);
@@ -235,9 +237,9 @@ void dibujar_menu_configuracion(void)
 void dibujar_esperando_huella(void)
 {
     TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(10, 40, "ESPERANDO HUELLA", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(10, 60, "Coloque su dedo", ST7735_CYAN, ST7735_BLACK, 1);
-    TFTdrawText(10, 80, "en el sensor", ST7735_CYAN, ST7735_BLACK, 1);
+    TFTdrawText(10, 40, "COLOQUE SU DEDO", ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(10, 60, "y presione A:", ST7735_CYAN, ST7735_BLACK, 1);
+    TFTdrawText(10, 80, "para escanear asistencia", ST7735_CYAN, ST7735_BLACK, 1);
     TFTdrawText(10, 120, "B: Cancelar", ST7735_WHITE, ST7735_BLACK, 1);
 }
 
@@ -290,3 +292,9 @@ int16_t get_centered_position(const char* text) {
     int text_width = text_length(text) * CHAR_WIDTH;
     return (SCREEN_WIDTH - text_width) / 2;
 }
+
+
+
+
+
+

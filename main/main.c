@@ -32,9 +32,14 @@
 #include "common.h"
 #include "draw.h"
 #include <inttypes.h>
+#include <time.h>
+#include <sys/time.h>
+#include "esp_sntp.h"
 
 #define NVS_NAMESPACE "user_data"
 #define MAX_USERS 100 
+#define LOGS_PER_PAGE 4
+#define MAX_DISPLAY_LINE 32
 // Constants and definitions
 #define FIREBASE_HOST "https://users-89d5a-default-rtdb.firebaseio.com"
 #define FIREBASE_AUTH "your-database-secret"
@@ -63,6 +68,7 @@
 #define PIN_NUM_CS    38
 
 static const char *TAG = "main";
+static const char *TAG_TIME = "time_sync";
 
 sdmmc_card_t *card;
 
@@ -74,6 +80,8 @@ static EventGroupHandle_t s_wifi_event_group;
 
 
 // Global variables
+// Global variable to store the current time
+struct tm timeinfo;
 // In main.c
 EstadoMenu estado_actual = ESTADO_BIENVENIDA;
 DatosUsuario usuario_actual = {0};
@@ -86,10 +94,14 @@ int input_index = 0;
 // Function prototypes
 void pantalla_task(void *pvParameters);
 void teclado_task(void *pvParameters);
+void sync_time(void);
+void initialize_sntp(void);
+void get_current_time(struct tm *timeinfo);
 
 void wifi_init_sta();
 
 void print_nvs_stats();
+
 
 
 static void event_handler(void* arg, esp_event_base_t event_base,
@@ -130,7 +142,8 @@ void app_main() {
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init_sta();
     
-
+    // Sync time
+    sync_time();
 
     // Initialize AS608 fingerprint sensor
     uint32_t addr = 0xFFFFFFFF;  // Default address
@@ -166,6 +179,10 @@ void teclado_task(void *pvParameters) {
         vTaskDelete(NULL);
     }
 
+    TickType_t last_fingerprint_check = 0;
+    const TickType_t fingerprint_check_interval = pdMS_TO_TICKS(3000);
+    static uint32_t log_start_index = 0;
+
     while(true) {
         char keypressed = keypad_getkey();
         if(keypressed != '\0') {
@@ -183,9 +200,43 @@ void teclado_task(void *pvParameters) {
                         memset(admin_pin_input, 0, sizeof(admin_pin_input));
                     } else if (keypressed == '*'){
                         estado_actual = ESTADO_ASISTENCIA;
-                        iniciar_estado_asistencia();
                     }
                     break;
+                case ESTADO_ASISTENCIA:
+         if (estado_actual == ESTADO_ASISTENCIA) {
+            TickType_t now = xTaskGetTickCount();
+            if (now - last_fingerprint_check >= fingerprint_check_interval) {
+                last_fingerprint_check = now;
+                dibujar_esperando_huella();
+                ESP_LOGI(TAG, "Scanning for fingerprint...");
+
+                uint8_t res;
+                uint16_t score, found_page;
+                as608_status_t status;
+                
+                res = as608_basic_verify(&found_page, &score, &status);
+                
+                if (res == 0 && status == AS608_STATUS_OK) {
+                    DatosUsuario usuario;
+                    if (load_user_data_nvs(&usuario, found_page) == ESP_OK &&
+                        register_attendance_nvs(&usuario) == ESP_OK) {
+                        dibujar_asistencia_registrada(found_page);
+                        ESP_LOGI(TAG, "Attendance registered for user: %s", usuario.cedula);
+                        vTaskDelay(pdMS_TO_TICKS(3000));
+                        estado_actual = ESTADO_PRINCIPAL;
+                    } else {
+                        dibujar_error_registro_asistencia();
+                        ESP_LOGE(TAG, "Error registering attendance");
+                        vTaskDelay(pdMS_TO_TICKS(3000));
+                    }
+                } else {
+                    dibujar_huella_no_reconocida();
+                    ESP_LOGI(TAG, "Fingerprint not recognized");
+                    vTaskDelay(pdMS_TO_TICKS(1000)); // Show "not recognized" for 1 second
+                }
+            }
+            }
+            break;
                 case ESTADO_INGRESAR_PIN_ADMIN:
                     if(keypressed >= '0' && keypressed <= '9' && input_index < 4) {
                         admin_pin_input[input_index++] = keypressed;
@@ -206,7 +257,7 @@ void teclado_task(void *pvParameters) {
                     }
                     break;
                     case ESTADO_CONFIGURACION:
-                        if(keypressed >= '1' && keypressed <= '4') {
+                        if(keypressed >= '1' && keypressed <= '5') {
                             opcion_seleccionada = keypressed - '0';
                         } else if(keypressed == 'A') {
                             switch(opcion_seleccionada) {
@@ -223,6 +274,10 @@ void teclado_task(void *pvParameters) {
                                     break;
                                 case 4:
                                     estado_actual = ESTADO_RESETEAR_SISTEMA;
+                                    break;
+                                case 5:
+                                    estado_actual = ESTADO_VER_REGISTRO;
+                                    log_start_index = 0;
                                     break;
                             }
                         } else if(keypressed == 'B') {
@@ -243,6 +298,25 @@ void teclado_task(void *pvParameters) {
                     } else if(keypressed == 'B') {
                         estado_actual = ESTADO_CONFIGURACION;
                         opcion_seleccionada = 1;
+                    }
+                    break;
+                case ESTADO_VER_REGISTRO:
+                    if(keypressed == 'B') {
+                        estado_actual = ESTADO_CONFIGURACION;
+                        opcion_seleccionada = 5;
+                    } else if(keypressed == 'A') {
+                        nvs_handle_t nvs_handle;
+                        esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
+                        if (err == ESP_OK) {
+                            uint32_t log_count = 0;
+                            nvs_get_u32(nvs_handle, "log_count", &log_count);
+                            nvs_close(nvs_handle);
+                            
+                            if (log_start_index + LOGS_PER_PAGE < log_count) {
+                                log_start_index += LOGS_PER_PAGE;
+                                estado_actual = ESTADO_VER_REGISTRO;  // Force redraw
+                            }
+                        }
                     }
                     break;
 
@@ -357,13 +431,6 @@ void teclado_task(void *pvParameters) {
                         opcion_seleccionada = 1;
                     }
                     break;
-                case ESTADO_ASISTENCIA:
-    		    if(keypressed == 'B') {
-                    estado_actual = ESTADO_PRINCIPAL;
-                    } else if (keypressed == 'A') {
-                    iniciar_estado_asistencia();
-                    }
-                    break;
                 case ESTADO_RESUMEN_REGISTRO:
                     if(keypressed == 'A') {
                         // Implement logic to save the user data
@@ -387,6 +454,7 @@ void pantalla_task(void *pvParameters) {
     EstadoMenu estado_anterior = ESTADO_BIENVENIDA;
     int opcion_seleccionada_anterior = 0;
     TickType_t last_update = xTaskGetTickCount();
+    static uint32_t log_start_index = 0;
 
     while (true) {
         if (estado_actual != estado_anterior || opcion_seleccionada != opcion_seleccionada_anterior) {
@@ -441,6 +509,9 @@ void pantalla_task(void *pvParameters) {
                     break;
                 case ESTADO_ERROR_RESET:
                     dibujar_error_reset();
+                    break;
+                case ESTADO_VER_REGISTRO:
+                    dibujar_ver_registro(log_start_index);
                     break;
                 default:
                     ESP_LOGE("PANTALLA", "Estado no manejado: %d", estado_actual);
@@ -719,65 +790,37 @@ esp_err_t register_attendance(uint16_t page_number) {
 }
 
 void estado_asistencia_task(void *pvParameters) {
-    uint8_t res;
-    uint16_t score;
-    uint16_t found_page;
-    as608_status_t status;
-    int retry_count = 0;
+    while (true) {
+        if (estado_actual == ESTADO_ASISTENCIA) {
+            dibujar_esperando_huella();
+            vTaskDelay(pdMS_TO_TICKS(3000));
 
-    while (estado_actual == ESTADO_ASISTENCIA) {
-        vTaskDelay(pdMS_TO_TICKS(3000));  // Display "waiting for fingerprint" for 3 seconds
-
-        res = as608_basic_verify(&found_page, &score, &status);
-
-        if (res == 0) {
-            if (status == AS608_STATUS_OK) {
-                ESP_LOGI(TAG, "Fingerprint matched. Page: %d, Score: %d", found_page, score);
-                
-                // Load user data from NVS
+            uint8_t res;
+            uint16_t score, found_page;
+            as608_status_t status;
+            
+            res = as608_basic_verify(&found_page, &score, &status);
+            
+            if (res == 0 && status == AS608_STATUS_OK) {
                 DatosUsuario usuario;
-                esp_err_t err = load_user_data_nvs(&usuario, found_page);
-                
-                if (err == ESP_OK) {
-                    // Register attendance
-                    if (register_attendance_nvs(&usuario) == ESP_OK) {
-                        dibujar_asistencia_registrada(found_page);
-                    } else {
-                        dibujar_error_registro_asistencia();
-                    }
+                if (load_user_data_nvs(&usuario, found_page) == ESP_OK &&
+                    register_attendance_nvs(&usuario) == ESP_OK) {
+                    dibujar_asistencia_registrada(found_page);
+                    vTaskDelay(pdMS_TO_TICKS(3000));
+                    estado_actual = ESTADO_PRINCIPAL;
                 } else {
-                    ESP_LOGE(TAG, "Failed to load user data for page %d", found_page);
                     dibujar_error_registro_asistencia();
                 }
-                
-                retry_count = 0;
             } else {
-                ESP_LOGI(TAG, "Fingerprint not recognized. Status: %d", status);
                 dibujar_huella_no_reconocida();
-                retry_count++;
             }
-        } else {
-            ESP_LOGE(TAG, "Error in fingerprint verification. Result: %d", res);
-            dibujar_error_verificacion();
-            retry_count++;
+            
+            vTaskDelay(pdMS_TO_TICKS(3000));
         }
-
-        vTaskDelay(pdMS_TO_TICKS(3000));  // Display result for 3 seconds
-
-        if (retry_count >= MAX_RETRY) {
-            TFTfillScreen(ST7735_BLACK);
-            TFTdrawText(10, 40, "MAXIMO DE INTENTOS", ST7735_RED, ST7735_BLACK, 1);
-            TFTdrawText(10, 60, "ALCANZADO", ST7735_RED, ST7735_BLACK, 1);
-            vTaskDelay(pdMS_TO_TICKS(3000));  // Display message for 3 seconds
-            estado_actual = ESTADO_BIENVENIDA;
-            break;
-        }
-
-        vTaskDelay(pdMS_TO_TICKS(1000));  // Wait for 1 second before next attempt
+        vTaskDelay(pdMS_TO_TICKS(100));
     }
-
-    vTaskDelete(NULL);
 }
+
 
 esp_err_t erase_all_user_data_nvs() {
     nvs_handle_t nvs_handle;
@@ -811,10 +854,8 @@ esp_err_t erase_all_user_data_nvs() {
 }
 
 esp_err_t register_attendance_nvs(const DatosUsuario *usuario) {
-    time_t now;
-    time(&now);
     struct tm timeinfo;
-    localtime_r(&now, &timeinfo);
+    get_current_time(&timeinfo);
 
     // Create a log entry
     char log_entry[128];
@@ -905,4 +946,106 @@ esp_err_t load_user_data_nvs(DatosUsuario *usuario, uint16_t huella_pagina) {
     nvs_close(nvs_handle);
 
     return err;
+}
+
+
+
+void dibujar_ver_registro(uint32_t start_index) {
+    TFTfillScreen(ST7735_BLACK);
+    TFTdrawText(get_centered_position("REGISTRO DE ASISTENCIA"), 0, "REGISTRO DE ASISTENCIA", ST7735_WHITE, ST7735_BLACK, 1);
+
+    nvs_handle_t nvs_handle;
+    esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
+    if (err != ESP_OK) {
+        TFTdrawText(0, SCREEN_HEIGHT/2, "Error al abrir NVS", ST7735_RED, ST7735_BLACK, 1);
+        return;
+    }
+
+    uint32_t log_count = 0;
+    nvs_get_u32(nvs_handle, "log_count", &log_count);
+
+    for (int i = 0; i < LOGS_PER_PAGE; i++) {
+        uint32_t index = start_index + i;
+        if (index >= log_count) break;
+
+        char key[16];
+        snprintf(key, sizeof(key), "log_%" PRIu32, index);
+
+        char log_entry[128];
+        size_t required_size = sizeof(log_entry);
+        err = nvs_get_str(nvs_handle, key, log_entry, &required_size);
+        if (err == ESP_OK) {
+            int year, month, day, hour, min, sec;
+            char cedula[20], tipo[20];
+            sscanf(log_entry, "%d-%d-%d %d:%d:%d, %19[^,], %19s", 
+                   &year, &month, &day, &hour, &min, &sec, cedula, tipo);
+            
+            char display_line[MAX_DISPLAY_LINE];
+            snprintf(display_line, sizeof(display_line), "%.10s %02d/%02d %02d:%02d", 
+                     cedula, day, month, hour, min);
+            TFTdrawText(0, 20 + i*CHAR_HEIGHT*2, display_line, ST7735_WHITE, ST7735_BLACK, 1);
+        }
+    }
+
+    nvs_close(nvs_handle);
+
+    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT*2, "B: Regresar", ST7735_WHITE, ST7735_BLACK, 1);
+    if (start_index + LOGS_PER_PAGE < log_count) {
+        TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "A: Siguiente", ST7735_WHITE, ST7735_BLACK, 1);
+    }
+}
+
+// Function to initialize and start the SNTP client
+void initialize_sntp(void) {
+    ESP_LOGI(TAG_TIME, "Initializing SNTP");
+    sntp_setoperatingmode(SNTP_OPMODE_POLL);
+    sntp_setservername(0, "pool.ntp.org");
+    sntp_init();
+}
+
+
+// Function to sync time
+void sync_time(void) {
+    time_t now = 0;
+    struct tm timeinfo = { 0 };
+    int retry = 0;
+    const int retry_count = 10;
+
+    initialize_sntp();
+
+    // Wait for time to be set
+    while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
+        ESP_LOGI(TAG_TIME, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
+        vTaskDelay(2000 / portTICK_PERIOD_MS);
+    }
+
+    time(&now);
+    localtime_r(&now, &timeinfo);
+
+    // If time sync failed, set a default time
+    if (timeinfo.tm_year < (2024 - 1900)) {
+        ESP_LOGI(TAG_TIME, "Time sync failed, setting default time");
+        timeinfo.tm_year = 2024 - 1900;
+        timeinfo.tm_mon = 8;  // September (0-based)
+        timeinfo.tm_mday = 29;
+        timeinfo.tm_hour = 20;
+        timeinfo.tm_min = 0;
+        timeinfo.tm_sec = 0;
+        struct timeval tv = { .tv_sec = mktime(&timeinfo) };
+        settimeofday(&tv, NULL);
+    }
+
+    setenv("TZ", "GMT-5", 1);
+    tzset();
+
+    char strftime_buf[64];
+    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
+    ESP_LOGI(TAG_TIME, "The current date/time is: %s", strftime_buf);
+}
+
+// Function to get current time
+void get_current_time(struct tm *timeinfo) {
+    time_t now;
+    time(&now);
+    localtime_r(&now, timeinfo);
 }

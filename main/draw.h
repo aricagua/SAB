@@ -38,6 +38,7 @@ void dibujar_error_borrado();
 void dibujar_resetear_sistema(void);
 void dibujar_reset_exitoso(void);
 void dibujar_error_reset(void);
+void dibujar_ver_registro(uint32_t start_index);
 int text_length(const char* text);
 int16_t get_centered_position(const char* text);
 
