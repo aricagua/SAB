@@ -40,7 +40,7 @@
 #define MAX_USERS 100 
 #define LOGS_PER_PAGE 6
 #define MAX_DISPLAY_LINE 32
-#define SMALL_FONT_SCALE 0.5
+#define SMALL_FONT_SCALE 1
 #define NORMAL_FONT_SCALE 2
 // Constants and definitions
 #define FIREBASE_HOST "https://users-89d5a-default-rtdb.firebaseio.com"
@@ -997,12 +997,13 @@ esp_err_t load_user_data_nvs(DatosUsuario *usuario, uint16_t huella_pagina) {
 
 void dibujar_ver_registro(uint32_t start_index) {
     TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("REGISTRO ASISTENCIA"), 0, "REGISTRO ASISTENCIA", ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
+    TFTdrawText(get_centered_position("REGISTRO"), 0, "REGISTRO", ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(get_centered_position("ASISTENCIA"), 10, "ASISTENCIA", ST7735_WHITE, ST7735_BLACK, 1);
 
     nvs_handle_t nvs_handle;
     esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
     if (err != ESP_OK) {
-        TFTdrawText(0, SCREEN_HEIGHT/2, "Error al abrir NVS", ST7735_RED, ST7735_BLACK, SMALL_FONT_SCALE);
+        TFTdrawText(0, SCREEN_HEIGHT/2, "Error NVS", ST7735_RED, ST7735_BLACK, SMALL_FONT_SCALE);
         return;
     }
 
@@ -1020,28 +1021,33 @@ void dibujar_ver_registro(uint32_t start_index) {
         size_t required_size = sizeof(log_entry);
         err = nvs_get_str(nvs_handle, key, log_entry, &required_size);
         if (err == ESP_OK) {
-            int year, month, day, hour, min, sec;
+            int year, month, day, hour, min;
             char cedula[20], tipo[20];
-            sscanf(log_entry, "%d-%d-%d %d:%d:%d, %19[^,], %19s", 
-                   &year, &month, &day, &hour, &min, &sec, cedula, tipo);
+            sscanf(log_entry, "%d-%d-%d %d:%d:%*d, %19[^,], %19s", 
+                   &year, &month, &day, &hour, &min, cedula, tipo);
             
-            char display_line[MAX_DISPLAY_LINE];
-            snprintf(display_line, sizeof(display_line), "%02d/%02d/%02d %02d:%02d %.8s", 
-                     day, month, year % 100, hour, min, cedula);
-            TFTdrawText(0, 20 + i*(CHAR_HEIGHT+2)*SMALL_FONT_SCALE, display_line, ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
+            char date_line[MAX_DISPLAY_LINE];
+            char info_line[MAX_DISPLAY_LINE];
+            snprintf(date_line, sizeof(date_line), "%02d/%02d/%02d %02d:%02d", 
+                     day, month, year % 100, hour, min);
+            snprintf(info_line, sizeof(info_line), "%.10s %.4s", cedula, tipo);
+            
+            TFTdrawText(0, 25 + i*20, date_line, ST7735_YELLOW, ST7735_BLACK, SMALL_FONT_SCALE);
+            TFTdrawText(0, 25 + i*20 + 10, info_line, ST7735_CYAN, ST7735_BLACK, SMALL_FONT_SCALE);
         }
     }
 
     nvs_close(nvs_handle);
 
     char nav_text[64];
-    snprintf(nav_text, sizeof(nav_text), "B:Atras A:Sig C:Menu %lu/%lu", 
+    snprintf(nav_text, sizeof(nav_text), "B:Atrs A:Sig C:Menu %lu/%lu", 
              (unsigned long)(start_index/LOGS_PER_PAGE + 1), 
              (unsigned long)((log_count + LOGS_PER_PAGE - 1) / LOGS_PER_PAGE));
-    TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT*SMALL_FONT_SCALE, nav_text, ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
+    TFTdrawText(0, SCREEN_HEIGHT - 10, nav_text, ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
 
-    ESP_LOGI(TAG, "Finished drawing VER_REGISTRO screen. Start index: %lu, Log count: %lu", (unsigned long)start_index, (unsigned long)log_count);
+    ESP_LOGI(TAG, "VER_REGISTRO: Start index: %lu, Log count: %lu", (unsigned long)start_index, (unsigned long)log_count);
 }
+
 // Function to initialize and start the SNTP client
 void initialize_sntp(void) {
     ESP_LOGI(TAG_TIME, "Initializing SNTP");

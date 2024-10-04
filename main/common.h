@@ -9,6 +9,8 @@
 #define SCREEN_HEIGHT 160
 #define CHAR_WIDTH 6
 #define CHAR_HEIGHT 8
+#define ST7735_YELLOW 0xFFE0
+#define ST7735_CYAN 0x07FF
 
 typedef enum {
     ESTADO_BIENVENIDA,
