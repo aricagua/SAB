@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <tft.h>
+#include <time.h>
+#include <sys/time.h>
+#include "esp_sntp.h"
 
 
 int opcion_seleccionada = 1;
@@ -10,8 +13,17 @@ int opcion_seleccionada = 1;
 void dibujar_menu_principal() {
     TFTfillScreen(ST7735_BLACK);
     TFTdrawText(get_centered_position("BIENVENIDO"), 0, "BIENVENIDO", ST7735_WHITE, ST7735_BLACK, 1);
+
+    // Get current time
+    time_t now;
+    struct tm timeinfo;
+    time(&now);
+    localtime_r(&now, &timeinfo);
+
+    // Format date and time
     char fecha_hora[30];
-    snprintf(fecha_hora, sizeof(fecha_hora), "Agosto 10 de 2024 20:00");
+    strftime(fecha_hora, sizeof(fecha_hora), "%b %d %Y %H:%M", &timeinfo);
+
     TFTdrawText(get_centered_position(fecha_hora), SCREEN_HEIGHT/2 - CHAR_HEIGHT, fecha_hora, ST7735_WHITE, ST7735_BLACK, 1);
     TFTdrawText(get_centered_position("*: Asistencia"), SCREEN_HEIGHT/2 + CHAR_HEIGHT, "*: Asistencia", ST7735_WHITE, ST7735_BLACK, 1);
     TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT, "C: Configuracion", ST7735_WHITE, ST7735_BLACK, 1);

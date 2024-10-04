@@ -1,0 +1,3 @@
+Limpiar el código y modular mas
+Eliminar includes innecesarios.
+Eliminar archivos fuente innecesarios.

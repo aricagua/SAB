@@ -40,7 +40,7 @@
 #define MAX_USERS 100 
 #define LOGS_PER_PAGE 6
 #define MAX_DISPLAY_LINE 32
-#define SMALL_FONT_SCALE 1
+#define SMALL_FONT_SCALE 0.5
 #define NORMAL_FONT_SCALE 2
 // Constants and definitions
 #define FIREBASE_HOST "https://users-89d5a-default-rtdb.firebaseio.com"
@@ -302,29 +302,36 @@ void teclado_task(void *pvParameters) {
                         opcion_seleccionada = 1;
                     }
                     break;
-                case ESTADO_VER_REGISTRO:
-                    if(keypressed == 'B') {
-                        if (log_start_index >= LOGS_PER_PAGE) {
-                            log_start_index -= LOGS_PER_PAGE;
-                        } else {
-                            estado_actual = ESTADO_CONFIGURACION;
-                            opcion_seleccionada = 5;
-                        }
-                    } else if(keypressed == 'A') {
-                        nvs_handle_t nvs_handle;
-                        esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
-                        if (err == ESP_OK) {
-                            uint32_t log_count = 0;
-                            nvs_get_u32(nvs_handle, "log_count", &log_count);
-                            nvs_close(nvs_handle);
-                            
-                            if (log_start_index + LOGS_PER_PAGE < log_count) {
-                                log_start_index += LOGS_PER_PAGE;
-                            }
-                        }
-                    }
-                    estado_actual = ESTADO_VER_REGISTRO;  // Force redraw
-                    break;
+case ESTADO_VER_REGISTRO:
+    if(keypressed == 'B') {
+        ESP_LOGI(TAG, "B key pressed in ESTADO_VER_REGISTRO");
+        if (log_start_index >= LOGS_PER_PAGE) {
+            log_start_index -= LOGS_PER_PAGE;
+            ESP_LOGI(TAG, "Moving to previous page. New start index: %lu", (unsigned long)log_start_index);
+        } else {
+            estado_actual = ESTADO_CONFIGURACION;
+            opcion_seleccionada = 5;
+            ESP_LOGI(TAG, "Returning to ESTADO_CONFIGURACION");
+        }
+    } else if(keypressed == 'A') {
+        nvs_handle_t nvs_handle;
+        esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
+        if (err == ESP_OK) {
+            uint32_t log_count = 0;
+            nvs_get_u32(nvs_handle, "log_count", &log_count);
+            nvs_close(nvs_handle);
+            
+            if (log_start_index + LOGS_PER_PAGE < log_count) {
+                log_start_index += LOGS_PER_PAGE;
+                ESP_LOGI(TAG, "Moving to next page. New start index: %lu", (unsigned long)log_start_index);
+            }
+        }
+    } else if(keypressed == 'C') {
+        estado_actual = ESTADO_CONFIGURACION;
+        opcion_seleccionada = 5;
+        ESP_LOGI(TAG, "Returning to ESTADO_CONFIGURACION");
+    }
+    break;
 
                 case ESTADO_RESET_EXITOSO:
                 case ESTADO_ERROR_RESET:
@@ -362,6 +369,8 @@ void teclado_task(void *pvParameters) {
                             esp_err_t ret = save_user_data_nvs(&usuario_actual);
                             if (ret == ESP_OK) {
                                 estado_actual = ESTADO_REGISTRO_EXITOSO;
+                		memset(&usuario_actual, 0, sizeof(DatosUsuario));
+                		input_index = 0;
                             } else {
                                 estado_actual = ESTADO_ERROR_REGISTRO;
                             }
@@ -435,6 +444,8 @@ void teclado_task(void *pvParameters) {
                     if(keypressed == 'A') {
                         estado_actual = ESTADO_REGISTRAR_USUARIO;
                         opcion_seleccionada = 1;
+        		memset(&usuario_actual, 0, sizeof(DatosUsuario));
+        		input_index = 0;
                     }
                     break;
                 case ESTADO_RESUMEN_REGISTRO:
@@ -460,10 +471,14 @@ void pantalla_task(void *pvParameters) {
     EstadoMenu estado_anterior = ESTADO_BIENVENIDA;
     int opcion_seleccionada_anterior = 0;
     TickType_t last_update = xTaskGetTickCount();
+    TickType_t last_time_update = 0;
     static uint32_t log_start_index = 0;
 
     while (true) {
-        if (estado_actual != estado_anterior || opcion_seleccionada != opcion_seleccionada_anterior) {
+        TickType_t now = xTaskGetTickCount();
+
+        if (estado_actual != estado_anterior || opcion_seleccionada != opcion_seleccionada_anterior ||
+            (estado_actual == ESTADO_PRINCIPAL && now - last_time_update > pdMS_TO_TICKS(60000))) { // Update every minute
             TFTfillScreen(ST7735_BLACK);
 
             switch (estado_actual) {
@@ -473,6 +488,7 @@ void pantalla_task(void *pvParameters) {
                     break;
                 case ESTADO_PRINCIPAL:
                     dibujar_menu_principal();
+                    last_time_update = now;
                     break;
                 case ESTADO_INGRESAR_PIN_ADMIN:
                     dibujar_ingresar_pin_admin();
@@ -981,7 +997,7 @@ esp_err_t load_user_data_nvs(DatosUsuario *usuario, uint16_t huella_pagina) {
 
 void dibujar_ver_registro(uint32_t start_index) {
     TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("REGISTRO DE ASISTENCIA"), 0, "REGISTRO DE ASISTENCIA", ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
+    TFTdrawText(get_centered_position("REGISTRO ASISTENCIA"), 0, "REGISTRO ASISTENCIA", ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
 
     nvs_handle_t nvs_handle;
     esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
@@ -1019,17 +1035,19 @@ void dibujar_ver_registro(uint32_t start_index) {
     nvs_close(nvs_handle);
 
     char nav_text[64];
-    snprintf(nav_text, sizeof(nav_text), "B:Atras A:Sig %lu/%lu", 
+    snprintf(nav_text, sizeof(nav_text), "B:Atras A:Sig C:Menu %lu/%lu", 
              (unsigned long)(start_index/LOGS_PER_PAGE + 1), 
              (unsigned long)((log_count + LOGS_PER_PAGE - 1) / LOGS_PER_PAGE));
     TFTdrawText(0, SCREEN_HEIGHT - CHAR_HEIGHT*SMALL_FONT_SCALE, nav_text, ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
+
+    ESP_LOGI(TAG, "Finished drawing VER_REGISTRO screen. Start index: %lu, Log count: %lu", (unsigned long)start_index, (unsigned long)log_count);
 }
 // Function to initialize and start the SNTP client
 void initialize_sntp(void) {
     ESP_LOGI(TAG_TIME, "Initializing SNTP");
-    sntp_setoperatingmode(SNTP_OPMODE_POLL);
-    sntp_setservername(0, "pool.ntp.org");
-    sntp_init();
+    esp_sntp_setoperatingmode(ESP_SNTP_OPMODE_POLL);
+    esp_sntp_setservername(0, "pool.ntp.org");
+    esp_sntp_init();
 }
 
 
@@ -1064,7 +1082,7 @@ void sync_time(void) {
         settimeofday(&tv, NULL);
     }
 
-    setenv("TZ", "GMT-5", 1);
+    setenv("TZ", "VET4", 1);  // Venezuela Time Zone
     tzset();
 
     char strftime_buf[64];
