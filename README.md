@@ -1,35 +1,94 @@
-| Supported Targets | ESP32 | ESP32-C2 | ESP32-C3 | ESP32-C6 | ESP32-H2 | ESP32-P4 | ESP32-S2 | ESP32-S3 |
-| ----------------- | ----- | -------- | -------- | -------- | -------- | -------- | -------- | -------- |
+# 🖐️ ULAttendance: Fingerprint Attendance System
 
-# _Sample project_
+## 🏫 A Project from Universidad de Los Andes (ULA), Venezuela
 
-(See the README.md file in the upper level 'examples' directory for more information about examples.)
+### 👨‍🔬 Developed by Omar Andrade and Eduardo Sulbaran
 
-This is the simplest buildable example. The example is used by command `idf.py create-project`
-that copies the project to user specified path and set it's name. For more information follow the [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project)
+---
 
+## 🌟 Project Overview
 
+Welcome to ULAttendance, an innovative fingerprint-based attendance system born in the heart of the Andes! This project combines cutting-edge biometric technology with the spirit of Venezuelan ingenuity to revolutionize how attendance is tracked in educational and professional settings.
 
-## How to use example
-We encourage the users to use the example as a template for the new projects.
-A recommended way is to follow the instructions on a [docs page](https://docs.espressif.com/projects/esp-idf/en/latest/api-guides/build-system.html#start-a-new-project).
+### 🇻🇪 Made in Venezuela, for the World
 
-## Example folder contents
+ULAttendance is proudly developed at the Universidad de Los Andes, showcasing the talent and creativity of Venezuelan engineers. Our system proves that great innovations can come from anywhere, even amidst challenges.
 
-The project **sample_project** contains one source file in C language [main.c](main/main.c). The file is located in folder [main](main).
+---
 
-ESP-IDF projects are built using CMake. The project build configuration is contained in `CMakeLists.txt`
-files that provide set of directives and instructions describing the project's source files and targets
-(executable, library, or both). 
+## 🔑 Key Features
 
-Below is short explanation of remaining files in the project folder.
+- **Biometric Authentication**: Utilizes AS608 fingerprint sensor for secure and quick identification.
+- **User-Friendly Interface**: TFT display and keypad for easy interaction and setup.
+- **Robust Data Management**: Efficient storage and retrieval of user data and attendance logs.
+- **Time Synchronization**: Keeps accurate time with SNTP, ensuring precise attendance records.
+- **Flexible Connectivity**: WiFi capabilities for potential future expansions.
+- **Scalable Design**: Can handle multiple users and extensive attendance logs.
 
-```
-├── CMakeLists.txt
-├── main
-│   ├── CMakeLists.txt
-│   └── main.c
-└── README.md                  This is the file you are currently reading
-```
-Additionally, the sample project contains Makefile and component.mk files, used for the legacy Make based build system. 
-They are not used or needed when building with CMake and idf.py.
+---
+
+## 🛠️ Technology Stack
+
+- **Hardware**: ESP32 microcontroller, AS608 fingerprint sensor, TFT display, Keypad
+- **Software**: FreeRTOS, ESP-IDF framework
+- **Storage**: NVS (Non-Volatile Storage), SD Card support
+- **Connectivity**: WiFi for time synchronization and potential future features
+
+---
+
+## 🚀 Getting Started
+
+1. **Clone the Repository**
+   ```
+   git clone https://github.com/ULA-Venezuela/ULAttendance.git
+   ```
+
+2. **Set Up ESP-IDF**
+   Follow the [official ESP-IDF setup guide](https://docs.espressif.com/projects/esp-idf/en/latest/esp32/get-started/)
+
+3. **Configure the Project**
+   ```
+   idf.py menuconfig
+   ```
+   Set your WiFi SSID and password in the project configuration.
+
+4. **Build and Flash**
+   ```
+   idf.py build
+   idf.py -p (PORT) flash
+   ```
+
+5. **Monitor the Output**
+   ```
+   idf.py monitor
+   ```
+
+---
+
+## 🤝 Contributing
+
+We welcome contributions from the global community! Whether you're fixing bugs, improving documentation, or proposing new features, your efforts are appreciated.
+
+1. Fork the Project
+2. Create your Feature Branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your Changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the Branch (`git push origin feature/AmazingFeature`)
+5. Open a Pull Request
+
+---
+
+## 📜 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+## 🙏 Acknowledgments
+
+- Universidad de Los Andes for fostering innovation
+- The open-source community for invaluable tools and libraries
+- Our families and friends for their unwavering support
+
+---
+
+**¡Viva la innovación venezolana!** 🇻🇪✨
