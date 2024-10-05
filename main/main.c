@@ -1030,7 +1030,7 @@ void dibujar_ver_registro(uint32_t start_index) {
             char info_line[MAX_DISPLAY_LINE];
             snprintf(date_line, sizeof(date_line), "%02d/%02d/%02d %02d:%02d", 
                      day, month, year % 100, hour, min);
-            snprintf(info_line, sizeof(info_line), "%.10s %.4s", cedula, tipo);
+            snprintf(info_line, sizeof(info_line), "%.10s %.10s", cedula, tipo);
             
             TFTdrawText(0, 25 + i*20, date_line, ST7735_YELLOW, ST7735_BLACK, SMALL_FONT_SCALE);
             TFTdrawText(0, 25 + i*20 + 10, info_line, ST7735_CYAN, ST7735_BLACK, SMALL_FONT_SCALE);
