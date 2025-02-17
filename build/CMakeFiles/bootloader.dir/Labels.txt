@@ -1,13 +1,13 @@
 # Target labels
  bootloader
 # Source files and their labels
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/CMakeFiles/bootloader
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/CMakeFiles/bootloader.rule
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/CMakeFiles/bootloader-complete.rule
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
-/home/pepe/Proyecto_lab_electronica/Sistema_Asistencia_Biometrico/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/CMakeFiles/bootloader
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/CMakeFiles/bootloader.rule
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/CMakeFiles/bootloader-complete.rule
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/bootloader-prefix/src/bootloader-stamp/bootloader-build.rule
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/bootloader-prefix/src/bootloader-stamp/bootloader-configure.rule
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/bootloader-prefix/src/bootloader-stamp/bootloader-download.rule
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/bootloader-prefix/src/bootloader-stamp/bootloader-install.rule
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/bootloader-prefix/src/bootloader-stamp/bootloader-mkdir.rule
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/bootloader-prefix/src/bootloader-stamp/bootloader-patch.rule
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/bootloader-prefix/src/bootloader-stamp/bootloader-update.rule

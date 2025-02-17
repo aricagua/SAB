@@ -1,0 +1,138 @@
+ESP-ROM:esp32s3-20210327
+Build:Mar 27 2021
+rst:0x1 (POWERON),boot:0x8 (SPI_FAST_FLASH_BOOT)
+SPIWP:0xee
+mode:DIO, clock div:1
+load:0x3fce2810,len:0x178c
+load:0x403c8700,len:0x4
+load:0x403c8704,len:0xcb8
+load:0x403cb700,len:0x2db0
+entry 0x403c8914
+[0;32mI (27) boot: ESP-IDF v5.3-dirty 2nd stage bootloader[0m
+[0;32mI (27) boot: compile time Feb 16 2025 19:21:24[0m
+[0;32mI (27) boot: Multicore bootloader[0m
+[0;32mI (30) boot: chip revision: v0.2[0m
+[0;32mI (34) boot.esp32s3: Boot SPI Speed : 80MHz[0m
+[0;32mI (39) boot.esp32s3: SPI Mode       : DIO[0m
+[0;32mI (44) boot.esp32s3: SPI Flash Size : 2MB[0m
+[0;32mI (48) boot: Enabling RNG early entropy source...[0m
+[0;32mI (54) boot: Partition Table:[0m
+[0;32mI (57) boot: ## Label            Usage          Type ST Offset   Length[0m
+[0;32mI (65) boot:  0 nvs              WiFi data        01 02 00009000 00006000[0m
+[0;32mI (72) boot:  1 phy_init         RF data          01 01 0000f000 00001000[0m
+[0;32mI (79) boot:  2 factory          factory app      00 00 00010000 00100000[0m
+[0;32mI (87) boot: End of partition table[0m
+[0;32mI (91) esp_image: segment 0: paddr=00010020 vaddr=3c0a0020 size=24614h (149012) map[0m
+[0;32mI (126) esp_image: segment 1: paddr=0003463c vaddr=3fc9a400 size=049ach ( 18860) load[0m
+[0;32mI (131) esp_image: segment 2: paddr=00038ff0 vaddr=40374000 size=07028h ( 28712) load[0m
+[0;32mI (138) esp_image: segment 3: paddr=00040020 vaddr=42000020 size=94380h (607104) map[0m
+[0;32mI (249) esp_image: segment 4: paddr=000d43a8 vaddr=4037b028 size=0f380h ( 62336) load[0m
+[0;32mI (272) boot: Loaded app from partition at offset 0x10000[0m
+[0;32mI (273) boot: Disabling RNG early entropy source...[0m
+[0;32mI (284) cpu_start: Multicore app[0m
+[0;32mI (294) cpu_start: Pro cpu start user code[0m
+[0;32mI (294) cpu_start: cpu freq: 160000000 Hz[0m
+[0;32mI (294) app_init: Application information:[0m
+[0;32mI (297) app_init: Project name:     tes1[0m
+[0;32mI (301) app_init: App version:      1dcb08e-dirty[0m
+[0;32mI (307) app_init: Compile time:     Feb 16 2025 19:21:13[0m
+[0;32mI (313) app_init: ELF file SHA256:  6d06b99bf...[0m
+[0;32mI (318) app_init: ESP-IDF:          v5.3-dirty[0m
+[0;32mI (323) efuse_init: Min chip rev:     v0.0[0m
+[0;32mI (328) efuse_init: Max chip rev:     v0.99 [0m
+[0;32mI (333) efuse_init: Chip rev:         v0.2[0m
+[0;32mI (338) heap_init: Initializing. RAM available for dynamic allocation:[0m
+[0;32mI (345) heap_init: At 3FCA3150 len 000465C0 (281 KiB): RAM[0m
+[0;32mI (351) heap_init: At 3FCE9710 len 00005724 (21 KiB): RAM[0m
+[0;32mI (357) heap_init: At 3FCF0000 len 00008000 (32 KiB): DRAM[0m
+[0;32mI (363) heap_init: At 600FE100 len 00001EE8 (7 KiB): RTCRAM[0m
+[0;32mI (371) spi_flash: detected chip: boya[0m
+[0;32mI (374) spi_flash: flash io: dio[0m
+[0;33mW (378) spi_flash: Detected size(16384k) larger than the size in the binary image header(2048k). Using the size in the binary image header.[0m
+[0;32mI (391) sleep: Configure to isolate all GPIO pins in sleep state[0m
+[0;32mI (398) sleep: Enable automatic switching of GPIO sleep configuration[0m
+[0;32mI (405) main_task: Started on CPU0[0m
+[0;32mI (425) main_task: Calling app_main()[0m
+[0;32mI (445) main: ESP_WIFI_MODE_STA[0m
+[0;32mI (445) pp: pp rom version: e7ae62f[0m
+[0;32mI (445) net80211: net80211 rom version: e7ae62f[0m
+I (455) wifi:wifi driver task: 3fcad4ac, prio:23, stack:6656, core=0
+I (465) wifi:wifi firmware version: 0caa81945
+I (465) wifi:wifi certification version: v7.0
+I (465) wifi:config NVS flash: enabled
+I (465) wifi:config nano formating: disabled
+I (465) wifi:Init data frame dynamic rx buffer num: 32
+I (475) wifi:Init static rx mgmt buffer num: 5
+I (475) wifi:Init management short buffer num: 32
+I (485) wifi:Init dynamic tx buffer num: 32
+I (485) wifi:Init static tx FG buffer num: 2
+I (485) wifi:Init static rx buffer size: 1600
+I (495) wifi:Init static rx buffer num: 10
+I (495) wifi:Init dynamic rx buffer num: 32
+[0;32mI (505) wifi_init: rx ba win: 6[0m
+[0;32mI (505) wifi_init: accept mbox: 6[0m
+[0;32mI (505) wifi_init: tcpip mbox: 32[0m
+[0;32mI (515) wifi_init: udp mbox: 6[0m
+[0;32mI (515) wifi_init: tcp mbox: 6[0m
+[0;32mI (515) wifi_init: tcp tx win: 5760[0m
+[0;32mI (525) wifi_init: tcp rx win: 5760[0m
+[0;32mI (525) wifi_init: tcp mss: 1440[0m
+[0;32mI (535) wifi_init: WiFi IRAM OP enabled[0m
+[0;32mI (535) wifi_init: WiFi RX IRAM OP enabled[0m
+[0;32mI (545) phy_init: phy_version 680,a6008b2,Jun  4 2024,16:41:10[0m
+I (585) wifi:mode : sta (cc:8d:a2:0c:da:9c)
+I (585) wifi:enable tsf
+[0;32mI (585) main: wifi_init_sta finished.[0m
+[0;32mI (595) sntp_sync: Initializing SNTP[0m
+[0;32mI (595) sntp_sync: Waiting for system time to be set... (1/10)[0m
+I (595) wifi:new:<11,0>, old:<1,0>, ap:<255,255>, sta:<11,0>, prof:1, snd_ch_cfg:0x0
+I (605) wifi:state: init -> auth (0xb0)
+I (615) wifi:state: auth -> assoc (0x0)
+I (625) wifi:state: assoc -> run (0x10)
+I (1025) wifi:connected with El Guerrero, aid = 4, channel 11, BW20, bssid = bc:d1:77:9f:ce:5c
+I (1025) wifi:security: WPA2-PSK, phy: bg, rssi: -67
+I (1035) wifi:pm start, type: 1
+
+I (1035) wifi:dp: 1, bi: 102400, li: 3, scale listen interval from 307200 us to 307200 us
+I (1035) wifi:set rx beacon pti, rx_bcn_pti: 0, bcn_timeout: 25000, mt_pti: 0, mt_time: 10000
+I (1045) wifi:AP's beacon interval = 102400 us, DTIM period = 1
+[0;32mI (2555) esp_netif_handlers: sta ip: 192.168.1.107, mask: 255.255.255.0, gw: 192.168.1.1[0m
+[0;32mI (2555) main: Got IP:192.168.1.107[0m
+[0;32mI (2605) sntp_sync: Waiting for system time to be set... (2/10)[0m
+[0;32mI (4605) sntp_sync: Waiting for system time to be set... (3/10)[0m
+[0;32mI (6605) sntp_sync: Waiting for system time to be set... (4/10)[0m
+[0;32mI (8605) sntp_sync: Waiting for system time to be set... (5/10)[0m
+[0;32mI (10605) sntp_sync: Waiting for system time to be set... (6/10)[0m
+[0;32mI (12605) sntp_sync: Waiting for system time to be set... (7/10)[0m
+[0;32mI (14605) sntp_sync: Waiting for system time to be set... (8/10)[0m
+[0;32mI (16605) sntp_sync: Waiting for system time to be set... (9/10)[0m
+[0;32mI (18605) sntp_sync: Time sync failed, setting default time[0m
+[0;32mI (18605) sntp_sync: The current date/time is: Sun Sep 29 20:00:00 2024[0m
+[0;32mI (20005) main: AS608 initialized successfully[0m
+[0;32mI (20005) gpio: GPIO[20]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (20005) gpio: GPIO[21]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (20015) gpio: GPIO[48]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (20025) gpio: GPIO[45]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (20035) gpio: GPIO[47]| InputEn: 0| OutputEn: 0| OpenDrain: 0| Pullup: 1| Pulldown: 0| Intr:0 [0m
+[0;32mI (20045) main_task: Returned from app_main()[0m
+[0;32mI (71835) KEYPAD: Tecla presionada: C[0m
+[0;32mI (71835) DTMF: Playing DTMF tone for key: C[0m
+[0;32mI (74855) KEYPAD: Tecla presionada: 3[0m
+[0;32mI (74855) DTMF: Playing DTMF tone for key: 3[0m
+[0;32mI (75645) KEYPAD: Tecla presionada: 1[0m
+[0;32mI (75645) DTMF: Playing DTMF tone for key: 1[0m
+[0;32mI (76335) KEYPAD: Tecla presionada: 4[0m
+[0;32mI (76335) DTMF: Playing DTMF tone for key: 4[0m
+[0;32mI (77675) KEYPAD: Tecla presionada: 1[0m
+[0;32mI (77675) DTMF: Playing DTMF tone for key: 1[0m
+[0;32mI (78645) KEYPAD: Tecla presionada: A[0m
+[0;32mI (78645) DTMF: Playing DTMF tone for key: A[0m
+[0;32mI (80515) KEYPAD: Tecla presionada: A[0m
+[0;32mI (80515) DTMF: Playing DTMF tone for key: A[0m
+[0;32mI (82225) KEYPAD: Tecla presionada: A[0m
+[0;32mI (82225) DTMF: Playing DTMF tone for key: A[0m
+[0;32mI (83835) KEYPAD: Tecla presionada: 2[0m
+[0;32mI (83835) DTMF: Playing DTMF tone for key: 2[0m
+[0;32mI (84805) KEYPAD: Tecla presionada: 7[0m
+[0;32mI (84805) DTMF: Playing DTMF tone for key: 7[0m
+[0;32mI (86065) KEYPAD:

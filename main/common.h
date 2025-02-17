@@ -11,6 +11,10 @@
 #define CHAR_HEIGHT 8
 #define ST7735_YELLOW 0xFFE0
 #define ST7735_CYAN 0x07FF
+#define SMALL_FONT_SCALE 1  // Add this line
+#define LOGS_PER_PAGE 6     // Add this line
+#define MAX_DISPLAY_LINE 32 // Add this line
+
 
 typedef enum {
     ESTADO_BIENVENIDA,

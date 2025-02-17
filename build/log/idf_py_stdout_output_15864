@@ -1,0 +1,31 @@
+[1/11] Performing build step for 'bootloader'
+[1/1] cmd.exe /C "cd /D C:\Users\pepe\Desktop\Proyectos_Tesis\Biometrico\SAB\build\bootloader\esp-idf\esptool_py && C:\Espressif\python_env\idf5.3_py3.11_env\Scripts\python.exe C:/Espressif/frameworks/esp-idf-v5.3/components/partition_table/check_sizes.py --offset 0x8000 bootloader 0x0 C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/bootloader/bootloader.bin"
+Bootloader binary size 0x5260 bytes. 0x2da0 bytes (36%) free.
+[2/9] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/nvs_user_data_module.c.obj
+In file included from C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/main/nvs_user_data_module.c:4:
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/main/sntp_time_module.h:9:13: warning: 'initialize_sntp' declared 'static' but never defined [-Wunused-function]
+    9 | static void initialize_sntp(void); // Make initialize_sntp static
+      |             ^~~~~~~~~~~~~~~
+[3/9] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/draw.c.obj
+In file included from C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/main/draw.c:10:
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/main/sntp_time_module.h:9:13: warning: 'initialize_sntp' declared 'static' but never defined [-Wunused-function]
+    9 | static void initialize_sntp(void); // Make initialize_sntp static
+      |             ^~~~~~~~~~~~~~~
+[4/9] Building C object esp-idf/main/CMakeFiles/__idf_main.dir/main.c.obj
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/main/main.c:98:6: warning: 'initialize_sntp' declared 'static' but never defined [-Wunused-function]
+   98 | void initialize_sntp(void);
+      |      ^~~~~~~~~~~~~~~
+C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/main/main.c:71:20: warning: 'TAG_TIME' defined but not used [-Wunused-variable]
+   71 | static const char *TAG_TIME = "time_sync";
+      |                    ^~~~~~~~
+[5/9] Linking C static library esp-idf\main\libmain.a
+[6/9] Generating ld/sections.ld
+[7/9] Linking CXX executable tes1.elf
+[8/9] Generating binary image from built executable
+esptool.py v4.8.dev5
+Creating esp32s3 image...
+Merged 2 ELF sections
+Successfully created esp32s3 image.
+Generated C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/tes1.bin
+[9/9] cmd.exe /C "cd /D C:\Users\pepe\Desktop\Proyectos_Tesis\Biometrico\SAB\build\esp-idf\esptool_py && C:\Espressif\python_env\idf5.3_py3.11_env\Scripts\python.exe C:/Espressif/frameworks/esp-idf-v5.3/components/partition_table/check_sizes.py --offset 0x8000 partition --type app C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/partition_table/partition-table.bin C:/Users/pepe/Desktop/Proyectos_Tesis/Biometrico/SAB/build/tes1.bin"
+tes1.bin binary size 0xd3750 bytes. Smallest app partition is 0x100000 bytes. 0x2c8b0 bytes (17%) free.

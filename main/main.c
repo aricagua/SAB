@@ -8,43 +8,27 @@
 #include <esp_system.h>
 #include <driver/gpio.h>
 #include <tft.h>
-#include <esp_task_wdt.h>
 #include "dtmf.h"
 #include "driver_as608_basic.h"
-#include <esp_http_client.h>
-#include <cJSON.h>
-#include "esp_vfs_fat.h"
-#include "sdmmc_cmd.h"
 #include <stdint.h>
-#include <errno.h>
 #include "esp_wifi.h"
 #include "esp_event.h"
 #include "nvs_flash.h"
 #include "lwip/err.h"
 #include "lwip/sys.h"
-#include "dirent.h"
-#include "ff.h"
-#include "diskio.h"
-#include <sys/unistd.h>
-#include <sys/stat.h>
 #include "sdkconfig.h"
-#include "nvs.h"
+#include "nvs_user_data_module.h"
 #include "common.h"
 #include "draw.h"
 #include <inttypes.h>
 #include <time.h>
 #include <sys/time.h>
 #include "esp_sntp.h"
+#include "sntp_time_module.h"
 
-#define NVS_NAMESPACE "user_data"
-#define MAX_USERS 100 
-#define LOGS_PER_PAGE 6
-#define MAX_DISPLAY_LINE 32
-#define SMALL_FONT_SCALE 1
+
+#define MAX_USERS 100
 #define NORMAL_FONT_SCALE 2
-// Constants and definitions
-#define FIREBASE_HOST "https://users-89d5a-default-rtdb.firebaseio.com"
-#define FIREBASE_AUTH "your-database-secret"
 #define WIFI_SSID "El Guerrero"
 #define WIFI_PASS "Waleska5500"
 #define MAX_PAGE_DIGITS 3
@@ -57,22 +41,11 @@
 #define MAX_CEDULA_LENGTH 20
 #define MAX_TYPE_LENGTH 20
 #define PIN_LENGTH 4
-#define MOUNT_POINT "/sdcard"
 #define MAX_USER_DATA_SIZE 256
 
 #define MAX_RETRY 3
-#define LOG_FILE_PATH MOUNT_POINT"/log.txt"
-
-// Pin assignments for SD card
-#define PIN_NUM_MISO  37
-#define PIN_NUM_MOSI  35
-#define PIN_NUM_CLK   36
-#define PIN_NUM_CS    38
-
 static const char *TAG = "main";
 static const char *TAG_TIME = "time_sync";
-
-sdmmc_card_t *card;
 
 
 // WiFi event group
@@ -102,7 +75,7 @@ void get_current_time(struct tm *timeinfo);
 
 void wifi_init_sta();
 
-void print_nvs_stats();
+void print_nvs_stats(); // Function definition not found in provided code, assuming it's unused and can be removed if confirmed.
 
 
 
@@ -110,22 +83,17 @@ static void event_handler(void* arg, esp_event_base_t event_base,
                           int32_t event_id, void* event_data);
 
 esp_err_t delete_fingerprint(uint16_t page_number);
-esp_err_t register_fingerprint(uint16_t *page_number); 
-esp_err_t mount_sdcard(void);
+esp_err_t register_fingerprint(uint16_t *page_number);
+
 
 esp_err_t delete_all_fingerprints(void);
-esp_err_t format_sd_card(const char *mount_point);
-esp_err_t register_attendance(uint16_t page_number);
+
 void estado_asistencia_task(void *pvParameters);
-esp_err_t erase_all_user_data_nvs();
-esp_err_t load_user_data_nvs(DatosUsuario *usuario, uint16_t huella_pagina);
-esp_err_t save_user_data_nvs(const DatosUsuario *usuario);
-esp_err_t register_attendance_nvs(const DatosUsuario *usuario);
+
 
 const char* data = "Callback function called";
-/*************************sd************************************/
 void app_main() {
-    
+
     // Initialize NVS
     esp_err_t ret = nvs_flash_init();
     if (ret == ESP_ERR_NVS_NO_FREE_PAGES || ret == ESP_ERR_NVS_NEW_VERSION_FOUND) {
@@ -135,15 +103,11 @@ void app_main() {
     ESP_ERROR_CHECK(ret);
 
 
-    if (mount_sdcard() != ESP_OK) {
-    ESP_LOGE(TAG, "Failed to mount SD card");
-
-    }
 
     // Initialize WiFi
     ESP_LOGI(TAG, "ESP_WIFI_MODE_STA");
     wifi_init_sta();
-    
+
     // Sync time
     sync_time();
 
@@ -168,7 +132,7 @@ void iniciar_estado_asistencia() {
 
 void teclado_task(void *pvParameters) {
     gpio_num_t keypad[8] = {6, 7, 15, 16, 8, 14, 13, 12};
-    
+
     esp_err_t init_result = keypad_initalize(keypad);
     if (init_result != ESP_OK) {
         ESP_LOGE("KEYPAD", "Fallo al inicializar el teclado");
@@ -190,7 +154,7 @@ void teclado_task(void *pvParameters) {
         if(keypressed != '\0') {
             ESP_LOGI("KEYPAD", "Tecla presionada: %c", keypressed);
             dtmf_play_tone(keypressed);
-            
+
             switch(estado_actual) {
                case ESTADO_BIENVENIDA:
                     estado_actual = ESTADO_PRINCIPAL;
@@ -215,9 +179,9 @@ void teclado_task(void *pvParameters) {
                 uint8_t res;
                 uint16_t score, found_page;
                 as608_status_t status;
-                
+
                 res = as608_basic_verify(&found_page, &score, &status);
-                
+
                 if (res == 0 && status == AS608_STATUS_OK) {
                     DatosUsuario usuario;
                     if (load_user_data_nvs(&usuario, found_page) == ESP_OK &&
@@ -320,7 +284,7 @@ case ESTADO_VER_REGISTRO:
             uint32_t log_count = 0;
             nvs_get_u32(nvs_handle, "log_count", &log_count);
             nvs_close(nvs_handle);
-            
+
             if (log_start_index + LOGS_PER_PAGE < log_count) {
                 log_start_index += LOGS_PER_PAGE;
                 ESP_LOGI(TAG, "Moving to next page. New start index: %lu", (unsigned long)log_start_index);
@@ -345,19 +309,19 @@ case ESTADO_VER_REGISTRO:
                         opcion_seleccionada = keypressed - '0';
                     } else if(keypressed == 'A') {
                         switch(opcion_seleccionada) {
-                            case 1: 
-                                estado_actual = ESTADO_INGRESAR_CEDULA; 
+                            case 1:
+                                estado_actual = ESTADO_INGRESAR_CEDULA;
                                 input_index = 0;
                                 break;
-                            case 2: 
-                                estado_actual = ESTADO_INGRESAR_HUELLA; 
+                            case 2:
+                                estado_actual = ESTADO_INGRESAR_HUELLA;
                                 break;
-                            case 3: 
-                                estado_actual = ESTADO_INGRESAR_PIN; 
+                            case 3:
+                                estado_actual = ESTADO_INGRESAR_PIN;
                                 input_index = 0;
                                 break;
-                            case 4: 
-                                estado_actual = ESTADO_SELECCIONAR_TIPO; 
+                            case 4:
+                                estado_actual = ESTADO_SELECCIONAR_TIPO;
                                 break;
                         }
                     } else if(keypressed == 'B') {
@@ -614,10 +578,6 @@ esp_err_t register_fingerprint(uint16_t *page_number)
 }
 
 
-
-
-
-
 static void event_handler(void* arg, esp_event_base_t event_base, int32_t event_id, void* event_data) {
     if (event_base == WIFI_EVENT && event_id == WIFI_EVENT_STA_START) {
         esp_wifi_connect();
@@ -658,91 +618,6 @@ void wifi_init_sta(void) {
 }
 
 
-esp_err_t mount_sdcard(void)
-{
-    esp_err_t ret;
-    esp_vfs_fat_sdmmc_mount_config_t mount_config = {
-        .format_if_mount_failed = true,
-        .max_files = 5,
-        .allocation_unit_size = 16 * 1024
-    };
-    const char mount_point[] = MOUNT_POINT;
-    ESP_LOGI(TAG, "Initializing SD card");
-
-    sdmmc_host_t host = SDSPI_HOST_DEFAULT();
-    host.max_freq_khz = 1000;  // Set the SPI frequency to 10 MHz (10,000 kHz)
-
-    spi_bus_config_t bus_cfg = {
-        .mosi_io_num = PIN_NUM_MOSI,
-        .miso_io_num = PIN_NUM_MISO,
-        .sclk_io_num = PIN_NUM_CLK,
-        .quadwp_io_num = -1,
-        .quadhd_io_num = -1,
-        .max_transfer_sz = 4000,
-    };
-
-    ret = spi_bus_initialize(host.slot, &bus_cfg, SDSPI_DEFAULT_DMA);
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to initialize bus.");
-        return ret;
-    }
-
-    sdspi_device_config_t slot_config = SDSPI_DEVICE_CONFIG_DEFAULT();
-    slot_config.gpio_cs = PIN_NUM_CS;
-    slot_config.host_id = host.slot;
-
-    ESP_LOGI(TAG, "Mounting filesystem");
-    ret = esp_vfs_fat_sdspi_mount(mount_point, &host, &slot_config, &mount_config, &card);
-
-    if (ret != ESP_OK) {
-        ESP_LOGE(TAG, "Failed to mount filesystem");
-        return ret;
-    }
-    ESP_LOGI(TAG, "Filesystem mounted");
-    return ESP_OK;
-}
-
-esp_err_t save_user_data_nvs(const DatosUsuario *usuario) {
-    nvs_handle_t nvs_handle;
-    esp_err_t err;
-
-    // Open NVS
-    err = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &nvs_handle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error opening NVS handle: %s", esp_err_to_name(err));
-        return err;
-    }
-
-    // Create a key for the user based on their fingerprint page number
-    char key[16];
-    snprintf(key, sizeof(key), "user_%d", usuario->huella_pagina);
-
-    // Write the user data to NVS
-    err = nvs_set_blob(nvs_handle, key, usuario, sizeof(DatosUsuario));
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error writing user data to NVS: %s", esp_err_to_name(err));
-        nvs_close(nvs_handle);
-        return err;
-    }
-
-    // Commit the changes
-    err = nvs_commit(nvs_handle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error committing NVS changes: %s", esp_err_to_name(err));
-    } else {
-        ESP_LOGI(TAG, "User data saved successfully");
-    }
-
-    // Close NVS
-    nvs_close(nvs_handle);
-
-    return err;
-}
-
-
-
-
-
 esp_err_t delete_all_fingerprints(void)
 {
     uint8_t res;
@@ -766,50 +641,6 @@ esp_err_t delete_all_fingerprints(void)
     ESP_LOGI("FINGERPRINT", "All fingerprints deleted successfully");
     return ESP_OK;
 }
-	
-
-esp_err_t register_attendance(uint16_t page_number) {
-    char user_file[64];
-    snprintf(user_file, sizeof(user_file), MOUNT_POINT"/user_%d.txt", page_number);
-    
-    ESP_LOGI(TAG, "Opening user file %s", user_file);
-    FILE *f = fopen(user_file, "r");  
-    if (f == NULL) {
-        ESP_LOGE(TAG, "Failed to open user file for reading");
-        return ESP_FAIL;
-    }
-    
-    DatosUsuario usuario;
-    size_t read = fread(&usuario, sizeof(DatosUsuario), 1, f);
-    fclose(f);
-    
-    if (read != 1) {
-        ESP_LOGE(TAG, "Failed to read user data");
-        return ESP_FAIL;
-    }
-
-    time_t now;
-    time(&now);
-    struct tm timeinfo;
-    localtime_r(&now, &timeinfo);
-
-    ESP_LOGI(TAG, "Opening log file %s", LOG_FILE_PATH);
-    FILE *log_file = fopen(LOG_FILE_PATH, "a");  // Open in append mode
-    if (log_file == NULL) {
-       ESP_LOGE(TAG, "Failed to open log file for writing: %s", strerror(errno));
-       return ESP_FAIL;
-    }
-    
-    fprintf(log_file, "%04d-%02d-%02d %02d:%02d:%02d, %s, %s\n",
-            timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday,
-            timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec,
-            usuario.cedula, usuario.tipo);
-    
-    fclose(log_file);
-    
-    ESP_LOGI(TAG, "Attendance registered for user: %s", usuario.cedula);
-    return ESP_OK;
-}
 
 void estado_asistencia_task(void *pvParameters) {
     while (true) {
@@ -820,9 +651,9 @@ void estado_asistencia_task(void *pvParameters) {
             uint8_t res;
             uint16_t score, found_page;
             as608_status_t status;
-            
+
             res = as608_basic_verify(&found_page, &score, &status);
-            
+
             if (res == 0 && status == AS608_STATUS_OK) {
                 DatosUsuario usuario;
                 if (load_user_data_nvs(&usuario, found_page) == ESP_OK &&
@@ -836,269 +667,9 @@ void estado_asistencia_task(void *pvParameters) {
             } else {
                 dibujar_huella_no_reconocida();
             }
-            
+
             vTaskDelay(pdMS_TO_TICKS(3000));
         }
         vTaskDelay(pdMS_TO_TICKS(100));
     }
-}
-
-
-esp_err_t erase_all_user_data_nvs() {
-    nvs_handle_t nvs_handle;
-    esp_err_t err;
-
-    // Open NVS for user data
-    err = nvs_open(NVS_NAMESPACE, NVS_READWRITE, &nvs_handle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error opening NVS handle for user data: %s", esp_err_to_name(err));
-        return err;
-    }
-
-    // Erase all user data keys
-    err = nvs_erase_all(nvs_handle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error erasing all keys in user data namespace: %s", esp_err_to_name(err));
-    } else {
-        err = nvs_commit(nvs_handle);
-        if (err != ESP_OK) {
-            ESP_LOGE(TAG, "Error committing NVS changes for user data: %s", esp_err_to_name(err));
-        } else {
-            ESP_LOGI(TAG, "All user data erased successfully");
-        }
-    }
-
-    // Close NVS for user data
-    nvs_close(nvs_handle);
-
-    // Open NVS for attendance log (assuming ATTENDANCE_LOG_NAMESPACE exists)
-    err = nvs_open("attendance_log", NVS_READWRITE, &nvs_handle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error opening NVS handle for attendance log: %s", esp_err_to_name(err));
-        return err;
-    }
-
-    // Erase all attendance log keys
-    err = nvs_erase_all(nvs_handle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error erasing all keys in attendance log namespace: %s", esp_err_to_name(err));
-    } else {
-        err = nvs_commit(nvs_handle);
-        if (err != ESP_OK) {
-            ESP_LOGE(TAG, "Error committing NVS changes for attendance log: %s", esp_err_to_name(err));
-        } else {
-            ESP_LOGI(TAG, "All attendance log erased successfully");
-        }
-    }
-
-    // Close NVS for attendance log
-    nvs_close(nvs_handle);
-
-    return err;
-}
-
-
-esp_err_t register_attendance_nvs(const DatosUsuario *usuario) {
-    struct tm timeinfo;
-    get_current_time(&timeinfo);
-
-    // Create a log entry
-    char log_entry[128];
-    snprintf(log_entry, sizeof(log_entry), "%04d-%02d-%02d %02d:%02d:%02d, %s, %s",
-             timeinfo.tm_year + 1900, timeinfo.tm_mon + 1, timeinfo.tm_mday,
-             timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec,
-             usuario->cedula, usuario->tipo);
-
-    // Open NVS
-    nvs_handle_t nvs_handle;
-    esp_err_t err = nvs_open("attendance_log", NVS_READWRITE, &nvs_handle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error opening NVS handle: %s", esp_err_to_name(err));
-        return err;
-    }
-
-    // Get the current log count
-    uint32_t log_count = 0;
-    err = nvs_get_u32(nvs_handle, "log_count", &log_count);
-    if (err != ESP_OK && err != ESP_ERR_NVS_NOT_FOUND) {
-        ESP_LOGE(TAG, "Error reading log count: %s", esp_err_to_name(err));
-        nvs_close(nvs_handle);
-        return err;
-    }
-
-    // Create a key for this log entry
-    char key[16];
-    snprintf(key, sizeof(key), "log_%" PRIu32, log_count);
-
-    // Save the log entry
-    err = nvs_set_str(nvs_handle, key, log_entry);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error saving log entry: %s", esp_err_to_name(err));
-        nvs_close(nvs_handle);
-        return err;
-    }
-
-    // Increment and save the log count
-    log_count++;
-    err = nvs_set_u32(nvs_handle, "log_count", log_count);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error saving log count: %s", esp_err_to_name(err));
-        nvs_close(nvs_handle);
-        return err;
-    }
-
-    // Commit changes
-    err = nvs_commit(nvs_handle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error committing NVS changes: %s", esp_err_to_name(err));
-    }
-
-    // Close NVS
-    nvs_close(nvs_handle);
-
-    if (err == ESP_OK) {
-        ESP_LOGI(TAG, "Attendance registered for user: %s", usuario->cedula);
-    }
-
-    return err;
-}
-
-esp_err_t load_user_data_nvs(DatosUsuario *usuario, uint16_t huella_pagina) {
-    nvs_handle_t nvs_handle;
-    esp_err_t err;
-
-    // Open NVS
-    err = nvs_open(NVS_NAMESPACE, NVS_READONLY, &nvs_handle);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error opening NVS handle: %s", esp_err_to_name(err));
-        return err;
-    }
-
-    // Create the key for the user
-    char key[16];
-    snprintf(key, sizeof(key), "user_%d", huella_pagina);
-
-    // Read the user data from NVS
-    size_t required_size = sizeof(DatosUsuario);
-    err = nvs_get_blob(nvs_handle, key, usuario, &required_size);
-    if (err != ESP_OK) {
-        ESP_LOGE(TAG, "Error reading user data from NVS: %s", esp_err_to_name(err));
-    } else {
-        ESP_LOGI(TAG, "User data loaded successfully");
-    }
-
-    // Close NVS
-    nvs_close(nvs_handle);
-
-    return err;
-}
-
-
-
-void dibujar_ver_registro(uint32_t start_index) {
-    TFTfillScreen(ST7735_BLACK);
-    TFTdrawText(get_centered_position("REGISTRO"), 0, "REGISTRO", ST7735_WHITE, ST7735_BLACK, 1);
-    TFTdrawText(get_centered_position("ASISTENCIA"), 10, "ASISTENCIA", ST7735_WHITE, ST7735_BLACK, 1);
-
-    nvs_handle_t nvs_handle;
-    esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
-    if (err != ESP_OK) {
-        TFTdrawText(0, SCREEN_HEIGHT/2, "Error NVS", ST7735_RED, ST7735_BLACK, SMALL_FONT_SCALE);
-        return;
-    }
-
-    uint32_t log_count = 0;
-    nvs_get_u32(nvs_handle, "log_count", &log_count);
-
-    for (int i = 0; i < LOGS_PER_PAGE; i++) {
-        uint32_t index = start_index + i;
-        if (index >= log_count) break;
-
-        char key[16];
-        snprintf(key, sizeof(key), "log_%" PRIu32, index);
-
-        char log_entry[128];
-        size_t required_size = sizeof(log_entry);
-        err = nvs_get_str(nvs_handle, key, log_entry, &required_size);
-        if (err == ESP_OK) {
-            int year, month, day, hour, min;
-            char cedula[20], tipo[20];
-            sscanf(log_entry, "%d-%d-%d %d:%d:%*d, %19[^,], %19s", 
-                   &year, &month, &day, &hour, &min, cedula, tipo);
-            
-            char date_line[MAX_DISPLAY_LINE];
-            char info_line[MAX_DISPLAY_LINE];
-            snprintf(date_line, sizeof(date_line), "%02d/%02d/%02d %02d:%02d", 
-                     day, month, year % 100, hour, min);
-            snprintf(info_line, sizeof(info_line), "%.10s %.10s", cedula, tipo);
-            
-            TFTdrawText(0, 25 + i*20, date_line, ST7735_YELLOW, ST7735_BLACK, SMALL_FONT_SCALE);
-            TFTdrawText(0, 25 + i*20 + 10, info_line, ST7735_CYAN, ST7735_BLACK, SMALL_FONT_SCALE);
-        }
-    }
-
-    nvs_close(nvs_handle);
-
-    char nav_text[64];
-    snprintf(nav_text, sizeof(nav_text), "B:Atrs A:Sig C:Menu %lu/%lu", 
-             (unsigned long)(start_index/LOGS_PER_PAGE + 1), 
-             (unsigned long)((log_count + LOGS_PER_PAGE - 1) / LOGS_PER_PAGE));
-    TFTdrawText(0, SCREEN_HEIGHT - 10, nav_text, ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
-
-    ESP_LOGI(TAG, "VER_REGISTRO: Start index: %lu, Log count: %lu", (unsigned long)start_index, (unsigned long)log_count);
-}
-
-// Function to initialize and start the SNTP client
-void initialize_sntp(void) {
-    ESP_LOGI(TAG_TIME, "Initializing SNTP");
-    esp_sntp_setoperatingmode(ESP_SNTP_OPMODE_POLL);
-    esp_sntp_setservername(0, "pool.ntp.org");
-    esp_sntp_init();
-}
-
-
-// Function to sync time
-void sync_time(void) {
-    time_t now = 0;
-    struct tm timeinfo = { 0 };
-    int retry = 0;
-    const int retry_count = 10;
-
-    initialize_sntp();
-
-    // Wait for time to be set
-    while (sntp_get_sync_status() == SNTP_SYNC_STATUS_RESET && ++retry < retry_count) {
-        ESP_LOGI(TAG_TIME, "Waiting for system time to be set... (%d/%d)", retry, retry_count);
-        vTaskDelay(2000 / portTICK_PERIOD_MS);
-    }
-
-    time(&now);
-    localtime_r(&now, &timeinfo);
-
-    // If time sync failed, set a default time
-    if (timeinfo.tm_year < (2024 - 1900)) {
-        ESP_LOGI(TAG_TIME, "Time sync failed, setting default time");
-        timeinfo.tm_year = 2024 - 1900;
-        timeinfo.tm_mon = 8;  // September (0-based)
-        timeinfo.tm_mday = 29;
-        timeinfo.tm_hour = 20;
-        timeinfo.tm_min = 0;
-        timeinfo.tm_sec = 0;
-        struct timeval tv = { .tv_sec = mktime(&timeinfo) };
-        settimeofday(&tv, NULL);
-    }
-
-    setenv("TZ", "VET4", 1);  // Venezuela Time Zone
-    tzset();
-
-    char strftime_buf[64];
-    strftime(strftime_buf, sizeof(strftime_buf), "%c", &timeinfo);
-    ESP_LOGI(TAG_TIME, "The current date/time is: %s", strftime_buf);
-}
-
-// Function to get current time
-void get_current_time(struct tm *timeinfo) {
-    time_t now;
-    time(&now);
-    localtime_r(&now, timeinfo);
 }

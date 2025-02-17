@@ -13,5 +13,12 @@
     "idf.port": "/dev/ttyACM0",
     "idf.pythonBinPath": "/home/pepe/.espressif/python_env/idf5.2_py3.10_env/bin/python",
     "idf.toolsPath": "/home/pepe/.espressif",
-    "idf.flashType": "UART"
+    "idf.flashType": "UART",
+    "idf.portWin": "COM4",
+    "files.associations": {
+        "driver_as608_basic.h": "c",
+        "esp_http_client.h": "c",
+        "sntp_time_module.h": "c",
+        "time.h": "c"
+    }
 }

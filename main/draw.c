@@ -1,3 +1,4 @@
+/*draw.c*/
 #include "draw.h"
 #include "common.h"
 #include <stdio.h>
@@ -6,7 +7,14 @@
 #include <time.h>
 #include <sys/time.h>
 #include "esp_sntp.h"
+#include "sntp_time_module.h"
+#include "nvs_user_data_module.h"
+#include <nvs.h>        // Add this line
+#include <nvs_flash.h>  // Add this line (if not already initialized elsewhere)
+#include <esp_log.h>    // Add this line
 
+
+static const char *TAG = "draw";
 
 int opcion_seleccionada = 1;
 
@@ -305,6 +313,58 @@ int16_t get_centered_position(const char* text) {
     return (SCREEN_WIDTH - text_width) / 2;
 }
 
+void dibujar_ver_registro(uint32_t start_index) {
+    TFTfillScreen(ST7735_BLACK);
+    TFTdrawText(get_centered_position("REGISTRO"), 0, "REGISTRO", ST7735_WHITE, ST7735_BLACK, 1);
+    TFTdrawText(get_centered_position("ASISTENCIA"), 10, "ASISTENCIA", ST7735_WHITE, ST7735_BLACK, 1);
+
+    nvs_handle_t nvs_handle;
+    esp_err_t err = nvs_open("attendance_log", NVS_READONLY, &nvs_handle);
+    if (err != ESP_OK) {
+        TFTdrawText(0, SCREEN_HEIGHT/2, "Error NVS", ST7735_RED, ST7735_BLACK, SMALL_FONT_SCALE);
+        return;
+    }
+
+    uint32_t log_count = 0;
+    nvs_get_u32(nvs_handle, "log_count", &log_count);
+
+    for (int i = 0; i < LOGS_PER_PAGE; i++) {
+        uint32_t index = start_index + i;
+        if (index >= log_count) break;
+
+        char key[16];
+        snprintf(key, sizeof(key), "log_%" PRIu32, index);
+
+        char log_entry[128];
+        size_t required_size = sizeof(log_entry);
+        err = nvs_get_str(nvs_handle, key, log_entry, &required_size);
+        if (err == ESP_OK) {
+            int year, month, day, hour, min;
+            char cedula[20], tipo[20];
+            sscanf(log_entry, "%d-%d-%d %d:%d:%*d, %19[^,], %19s", 
+                   &year, &month, &day, &hour, &min, cedula, tipo);
+            
+            char date_line[MAX_DISPLAY_LINE];
+            char info_line[MAX_DISPLAY_LINE];
+            snprintf(date_line, sizeof(date_line), "%02d/%02d/%02d %02d:%02d", 
+                     day, month, year % 100, hour, min);
+            snprintf(info_line, sizeof(info_line), "%.10s %.10s", cedula, tipo);
+            
+            TFTdrawText(0, 25 + i*20, date_line, ST7735_YELLOW, ST7735_BLACK, SMALL_FONT_SCALE);
+            TFTdrawText(0, 25 + i*20 + 10, info_line, ST7735_CYAN, ST7735_BLACK, SMALL_FONT_SCALE);
+        }
+    }
+
+    nvs_close(nvs_handle);
+
+    char nav_text[64];
+    snprintf(nav_text, sizeof(nav_text), "B:Atrs A:Sig C:Menu %lu/%lu", 
+             (unsigned long)(start_index/LOGS_PER_PAGE + 1), 
+             (unsigned long)((log_count + LOGS_PER_PAGE - 1) / LOGS_PER_PAGE));
+    TFTdrawText(0, SCREEN_HEIGHT - 10, nav_text, ST7735_WHITE, ST7735_BLACK, SMALL_FONT_SCALE);
+
+    ESP_LOGI(TAG, "VER_REGISTRO: Start index: %lu, Log count: %lu", (unsigned long)start_index, (unsigned long)log_count);
+}
 
 
 

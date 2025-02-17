@@ -5,6 +5,7 @@
 #include <stdint.h>
 #include <stdbool.h>
 #include "common.h"
+#include "nvs_user_data_module.h"
 
 // In draw.h
 extern EstadoMenu estado_actual;
@@ -15,6 +16,7 @@ extern uint16_t page_to_delete;
 extern bool as608_initialized;
 extern int input_index; 
 
+void dibujar_ver_registro(uint32_t start_index);
 void dibujar_esperando_huella(void);
 void dibujar_asistencia_registrada(uint16_t page_number);
 void dibujar_error_registro_asistencia(void);
